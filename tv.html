@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>TV USF COHAB</title>
+    <style>
+        body { margin: 0; background: #001a33; color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+        .header { background: white; color: #003366; padding: 15px 50px; display: flex; justify-content: space-between; border-bottom: 8px solid #d9534f; }
+        .header h1 { margin: 0; font-size: 2.8rem; text-transform: uppercase; font-weight: 900; }
+        .header h2 { margin: 0; font-size: 1.2rem; color: #d9534f; font-weight: bold; }
+        .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        #nome { font-size: 8.5rem; font-weight: 900; margin: 0; color: #fff; text-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        #local { font-size: 4.5rem; color: #5cb85c; font-weight: bold; margin-top: -10px; }
+        .hist { height: 160px; background: rgba(255,255,255,0.05); display: flex; gap: 20px; padding: 15px; border-top: 2px solid rgba(255,255,255,0.1); }
+        .hist-card { background: white; color: #333; padding: 15px; border-radius: 12px; min-width: 250px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .footer-aviso { height: 70px; background: #003366; position: relative; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: bold; }
+        .bar { position: absolute; bottom: 0; left: 0; height: 6px; background: #5cb85c; width: 0%; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>USF COHAB</h1>
+            <h2>Dr. Joao Pereira da Rosa</h2>
+        </div>
+        <div id="relogio" style="font-size: 2.2rem; font-weight: bold; text-align: right;"></div>
+    </div>
+
+    <div class="main">
+        <h1 id="nome">AGUARDANDO</h1>
+        <h2 id="local">SISTEMA ATIVO</h2>
+    </div>
+
+    <div class="hist" id="historico"></div>
+
+    <div class="footer-aviso" id="fa">
+        <div id="aviso-txt">Bem-vindos à Unidade de Saúde</div>
+        <div class="bar" id="bar"></div>
+    </div>
+
+    <audio id="bell" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onChildAdded, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA5tayYNLD_P_ZnlWhst81Dkuz8gDv7vPU",
+            authDomain: "sistema-usf-cohab.firebaseapp.com",
+            databaseURL: "https://sistema-usf-cohab-default-rtdb.firebaseio.com",
+            projectId: "sistema-usf-cohab",
+            storageBucket: "sistema-usf-cohab.firebasestorage.app",
+            messagingSenderId: "184566338840",
+            appId: "1:184566338840:web:995a701e4c787be2927a6d"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let fila = [], falando = false, avisos = [], idxA = 0;
+
+        // Relógio
+        setInterval(() => { document.getElementById('relogio').innerText = new Date().toLocaleTimeString(); }, 1000);
+
+        // Monitor de Chamadas
+        onChildAdded(ref(db, 'fila'), (s) => { 
+            fila.push(s.val()); 
+            process(); 
+        });
+
+        async function process() {
+            if (falando || fila.length === 0) return;
+            falando = true;
+            const d = fila.shift();
+            
+            document.getElementById('nome').innerText = d.nome;
+            document.getElementById('local').innerText = d.local;
+            document.getElementById('bell').play();
+            
+            // Histórico Visual
+            const h = document.getElementById('historico');
+            const card = `<div class="hist-card"><b>${d.nome}</b><br><small>${d.local}</small></div>`;
+            h.innerHTML = card + h.innerHTML;
+            if(h.children.length > 5) h.removeChild(h.lastChild);
+
+            // Voz
+            const msg = new SpeechSynthesisUtterance(`${d.tipo === 'senha' ? 'Atenção, senha' : 'Atenção, paciente'}, ${d.nome}. Compareça ao setor ${d.local}`);
+            msg.lang = 'pt-BR';
+            msg.onend = () => { setTimeout(() => { falando = false; process(); }, 3000); };
+            window.speechSynthesis.speak(msg);
+        }
+
+        // Avisos Carrossel
+        onValue(ref(db, 'avisos'), (s) => { 
+            avisos = []; 
+            s.forEach(a => avisos.push(a.val())); 
+            if(avisos.length) rotate(); 
+        });
+        
+        function rotate() {
+            if(falando || !avisos.length) return;
+            const a = avisos[idxA];
+            document.getElementById('aviso-txt').innerText = a.texto;
+            document.getElementById('fa').style.backgroundColor = a.cor;
+            let w = 0;
+            const b = document.getElementById('bar');
+            const i = setInterval(() => {
+                if(falando) { b.style.width='0%'; clearInterval(i); return; }
+                w += 1; b.style.width = w + '%';
+                if(w >= 100) { clearInterval(i); idxA = (idxA + 1) % avisos.length; rotate(); }
+            }, 60);
+        }
+    </script>
+</body>
+</html>

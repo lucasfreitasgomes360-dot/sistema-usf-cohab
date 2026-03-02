@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel USF COHAB</title>
+    <style>
+        :root { --primary: #003366; --red: #d9534f; --bg: #f0f2f5; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .card { background: white; width: 100%; max-width: 500px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 12px solid var(--primary); padding: 20px; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { color: var(--primary); margin: 0; font-size: 1.8rem; text-transform: uppercase; }
+        .header h2 { color: var(--red); margin: 0; font-size: 1rem; font-weight: bold; }
+        .step { display: none; } .step.active { display: block; }
+        .btn-menu { width: 100%; padding: 15px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; background: white; font-weight: bold; color: var(--primary); cursor: pointer; text-align: left; }
+        .btn-call { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-danger { background: #6c757d; font-size: 0.8rem; margin-top: 20px; opacity: 0.7; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #333; border-radius: 8px; box-sizing: border-box; }
+        .btn-back { background: none; border: none; color: #666; cursor: pointer; text-decoration: underline; margin-bottom: 15px; }
+        .history-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px dashed #ccc; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="header">
+            <h1>USF COHAB</h1>
+            <h2>Dr. Joao Pereira da Rosa</h2>
+        </div>
+
+        <div id="step-menu" class="step active">
+            <button class="btn-menu" onclick="show('recepcao')">🏢 RECEPÇÃO (1, 2 e 3)</button>
+            <button class="btn-menu" onclick="show('acolhimento')">🏥 ACOLHIMENTO</button>
+            <button class="btn-menu" onclick="show('enfermagem')">👩‍⚕️ ENFERMAGEM</button>
+            <button class="btn-menu" onclick="show('gerencia')">⚙️ GERÊNCIA / AVISOS</button>
+        </div>
+
+        <div id="setor-recepcao" class="step">
+            <button class="btn-back" onclick="show('menu')">⬅ Voltar</button>
+            <h3>🏢 RECEPÇÃO</h3>
+            <select id="guiche-rep">
+                <option value="RECEPÇÃO 01">RECEPÇÃO 01</option>
+                <option value="RECEPÇÃO 02">RECEPÇÃO 02</option>
+                <option value="RECEPÇÃO 03">RECEPÇÃO 03</option>
+            </select>
+            <button class="btn-call" onclick="callT('NORMAL', 'guiche-rep')">🎫 CHAMAR NORMAL</button>
+            <button class="btn-call" style="background:#f0ad4e" onclick="callT('PREF', 'guiche-rep')">♿ CHAMAR PREFERENCIAL</button>
+            
+            <div id="hist-recepcao"></div>
+
+            <button class="btn-call btn-danger" onclick="resetSistema()">⚠️ ZERAR SENHAS DO DIA</button>
+        </div>
+
+        </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, push, runTransaction, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA5tayYNLD_P_ZnlWhst81Dkuz8gDv7vPU",
+            authDomain: "sistema-usf-cohab.firebaseapp.com",
+            databaseURL: "https://sistema-usf-cohab-default-rtdb.firebaseio.com",
+            projectId: "sistema-usf-cohab",
+            storageBucket: "sistema-usf-cohab.firebasestorage.app",
+            messagingSenderId: "184566338840",
+            appId: "1:184566338840:web:995a701e4c787be2927a6d"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        window.show = (id) => {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById(id === 'menu' ? 'step-menu' : 'setor-' + id).classList.add('active');
+        };
+
+        window.callT = (tipo, selectId) => {
+            const local = document.getElementById(selectId).value;
+            const p = ref(db, 'contadores/' + tipo.toLowerCase());
+            runTransaction(p, (c) => (c || 0) + 1).then(r => {
+                const n = String(r.snapshot.val()).padStart(3, '0');
+                const nome = tipo + " " + n;
+                push(ref(db, 'fila'), { nome, local, tipo: 'senha', time: new Date().toLocaleTimeString() });
+            });
+        };
+
+        // FUNÇÃO DE RESET COM SENHA
+        window.resetSistema = () => {
+            const senha = prompt("Digite a senha de segurança para ZERAR as senhas:");
+            if (senha === "usfcohab") {
+                if (confirm("Isso voltará todas as senhas para 001. Confirma?")) {
+                    set(ref(db, 'contadores'), { normal: 0, pref: 0, coleta: 0, odonto: 0 });
+                    remove(ref(db, 'fila'));
+                    alert("Sistema reiniciado com sucesso!");
+                }
+            } else {
+                alert("Senha incorreta! Operação cancelada.");
+            }
+        };
+    </script>
+</body>
+</html>
