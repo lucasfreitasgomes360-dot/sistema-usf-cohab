@@ -12,7 +12,8 @@
         #nome { font-size: 8rem; color: var(--accent); font-weight: 900; text-align: center; padding: 0 20px; text-shadow: 4px 4px 10px rgba(0,0,0,0.3); }
         .box { background: white; color: var(--primary); padding: 15px 60px; border-radius: 50px; font-size: 3.5rem; font-weight: 900; margin-top: 20px; text-transform: uppercase; }
         .history-panel { flex: 1; background: rgba(0,0,0,0.2); padding: 15px; border-left: 2px solid rgba(255,255,255,0.1); }
-        .hist-item { background: white; color: var(--primary); margin-bottom: 12px; padding: 15px; border-radius: 12px; border-left: 8px solid var(--accent); }
+        .hist-item { background: white; color: var(--primary); margin-bottom: 12px; padding: 15px; border-radius: 12px; border-left: 8px solid var(--accent); animation: slide 0.4s ease; }
+        @keyframes slide { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: translateX(0); } }
         .aviso-overlay { position: absolute; inset: 0; background: rgba(0,43,92,0.95); display: none; align-items: center; justify-content: center; z-index: 10; backdrop-filter: blur(8px); }
         .aviso-card { background: white; color: #333; width: 75%; padding: 50px; border-radius: 20px; text-align: center; position: relative; border-left: 20px solid var(--cor-dinamica); overflow: hidden; }
         .progress-bar { position: absolute; bottom: 0; left: 0; height: 12px; background: var(--cor-dinamica); width: 100%; transition: width 8s linear; }
@@ -52,7 +53,8 @@
 
         window.iniciarSom = () => { 
             document.getElementById('setup-som').style.display='none';
-            window.speechSynthesis.speak(new SpeechSynthesisUtterance("Som ativado"));
+            const v = new SpeechSynthesisUtterance("Som ativado");
+            window.speechSynthesis.speak(v);
         };
 
         setInterval(() => { document.getElementById('relogio').innerText = new Date().toLocaleTimeString(); }, 1000);
@@ -72,13 +74,13 @@
             item.innerHTML = `<div style="padding:10px"><b>${d.nome}</b><br><small style="color:red">${d.local}</small></div>`;
             const p = document.getElementById('historico');
             p.insertBefore(item, p.childNodes[0]);
-            if(p.children.length > 6) p.removeChild(p.lastChild);
+            if(p.children.length > 7) p.removeChild(p.lastChild);
 
             document.getElementById('bell').play();
 
             setTimeout(() => {
                 let loc = d.local.toUpperCase();
-                let prep = (loc.includes("TRIAGEM") || loc.includes("RECEPÇÃO") || loc.includes("SALA") || loc.includes("ODONTOLOGIA") || loc.includes("VACINA")) ? "à" : "ao";
+                let prep = (loc.includes("TRIAGEM") || loc.includes("RECEPÇÃO") || loc.includes("SALA") || loc.includes("ODONTOLOGIA") || loc.includes("VACINA") || loc.includes("ENFERMAGEM") || loc.includes("OBSERVAÇÃO")) ? "à" : "ao";
                 let frase = "";
                 
                 if (d.tipo === 'SENHA') {
