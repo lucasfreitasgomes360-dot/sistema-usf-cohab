@@ -4,23 +4,40 @@
     <meta charset="UTF-8">
     <title>TV - USF COHAB</title>
     <style>
-        body { margin: 0; background: #002b5c; color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 50px; border-bottom: 6px solid #ffcc00; background: #fff; color: #002b5c; }
-        .header h1 { margin: 0; font-size: 2.8rem; font-weight: 900; }
-        .header h2 { margin: 0; font-size: 1.3rem; color: #d9534f; font-weight: bold; }
-        .time { font-size: 3.5rem; font-weight: 900; color: #002b5c; }
-        .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        #nome { font-size: 9rem; color: #ffcc00; font-weight: 900; margin: 0; text-transform: uppercase; text-shadow: 4px 4px 15px rgba(0,0,0,0.6); text-align: center; }
-        .box { background: white; color: #002b5c; padding: 15px 80px; border-radius: 60px; font-size: 4.5rem; font-weight: 900; margin-top: 30px; box-shadow: 0 15px 30px rgba(0,0,0,0.4); text-transform: uppercase; }
+        :root { --primary: #002b5c; --accent: #ffcc00; --red: #d9534f; --gray: #f8f9fa; }
+        body { margin: 0; background: var(--primary); color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
         
-        /* Estilo da Barra de Progresso e Aviso */
-        .aviso-overlay { position: absolute; top: 140px; bottom: 0; left: 0; right: 0; background: #002b5c; display: none; align-items: center; justify-content: center; z-index: 10; }
-        .aviso-card { background: white; color: #333; width: 85%; padding: 60px; border-radius: 25px; text-align: center; position: relative; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.6); }
-        .progress-container { position: absolute; top: 0; left: 0; width: 100%; height: 12px; background: #eee; }
-        .progress-bar { height: 100%; background: #28a745; width: 100%; transition: width 8s linear; }
-        .aviso-txt { font-size: 4rem; font-weight: bold; margin-top: 20px; }
+        /* Cabeçalho */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; border-bottom: 6px solid var(--accent); background: #fff; color: var(--primary); z-index: 5; }
+        .header h1 { margin: 0; font-size: 2.2rem; font-weight: 900; }
+        .header h2 { margin: 0; font-size: 1.1rem; color: var(--red); font-weight: bold; }
+        .time { font-size: 2.8rem; font-weight: 900; }
 
-        .footer { height: 70px; background: rgba(0,0,0,0.4); display: flex; align-items: center; padding: 0 50px; font-size: 1.3rem; border-top: 1px solid rgba(255,255,255,0.1); color: #aaa; }
+        /* Estrutura Principal: Chamada + Histórico */
+        .container { flex: 1; display: flex; overflow: hidden; }
+
+        /* Área da Chamada Atual */
+        .main-call { flex: 3; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; border-right: 2px solid rgba(255,255,255,0.1); }
+        #nome { font-size: 8rem; color: var(--accent); font-weight: 900; margin: 0; text-transform: uppercase; text-shadow: 4px 4px 15px rgba(0,0,0,0.6); text-align: center; }
+        .box { background: white; color: var(--primary); padding: 15px 60px; border-radius: 50px; font-size: 3.5rem; font-weight: 900; margin-top: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); text-transform: uppercase; }
+
+        /* Barra Lateral de Histórico */
+        .history-panel { flex: 1; background: rgba(0,0,0,0.2); display: flex; flex-direction: column; padding: 10px; }
+        .history-title { text-align: center; font-size: 1.5rem; font-weight: bold; color: var(--accent); padding: 10px 0; border-bottom: 2px solid var(--accent); margin-bottom: 10px; }
+        .hist-item { background: white; color: var(--primary); margin-bottom: 10px; padding: 15px; border-radius: 12px; animation: slideIn 0.5s ease-out; }
+        .hist-nome { font-size: 1.8rem; font-weight: 900; display: block; }
+        .hist-local { font-size: 1rem; font-weight: bold; color: var(--red); text-transform: uppercase; }
+
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* Avisos (Sobrepõe apenas a área de chamada) */
+        .aviso-overlay { position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: var(--primary); display: none; align-items: center; justify-content: center; z-index: 10; }
+        .aviso-card { background: white; color: #333; width: 85%; padding: 40px; border-radius: 20px; text-align: center; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.6); }
+        .progress-container { position: absolute; top: 0; left: 0; width: 100%; height: 10px; background: #eee; }
+        .progress-bar { height: 100%; background: #28a745; width: 100%; }
+        .aviso-txt { font-size: 3rem; font-weight: bold; margin-top: 20px; }
+
+        .footer { height: 50px; background: rgba(0,0,0,0.5); display: flex; align-items: center; padding: 0 40px; font-size: 1rem; color: #ccc; }
     </style>
 </head>
 <body>
@@ -28,17 +45,26 @@
         <div><h1>USF COHAB</h1><h2>Dr. João Pereira da Rosa</h2></div>
         <div class="time" id="relogio">00:00:00</div>
     </div>
-    <div class="main">
-        <h1 id="nome">AGUARDANDO</h1>
-        <div class="box" id="local">SISTEMA ATIVO</div>
-    </div>
-    <div class="aviso-overlay" id="tela-aviso">
-        <div class="aviso-card">
-            <div class="progress-container"><div class="progress-bar" id="p-bar"></div></div>
-            <div style="color:#28a745; font-size:1.5rem; font-weight:bold; margin-top:10px;">INFORMATIVO DA UNIDADE</div>
-            <div class="aviso-txt" id="txt-aviso"></div>
+
+    <div class="container">
+        <div class="main-call">
+            <h1 id="nome">AGUARDANDO</h1>
+            <div class="box" id="local">SISTEMA ATIVO</div>
+
+            <div class="aviso-overlay" id="tela-aviso">
+                <div class="aviso-card">
+                    <div class="progress-container"><div class="progress-bar" id="p-bar"></div></div>
+                    <div style="color:#28a745; font-size:1.2rem; font-weight:bold; margin-top:10px;">INFORMATIVO</div>
+                    <div class="aviso-txt" id="txt-aviso"></div>
+                </div>
+            </div>
         </div>
+
+        <div class="history-panel" id="historico">
+            <div class="history-title">ÚLTIMAS CHAMADAS</div>
+            </div>
     </div>
+
     <div class="footer">Lucas Freitas Gomes © 2026 | USF COHAB</div>
     <audio id="bell" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
 
@@ -59,7 +85,7 @@
         const app = initializeApp(config);
         const db = getDatabase(app);
         const horaDeAbertura = Date.now();
-        let fila = [], falando = false, avisos = [], idxA = 0, timerAviso;
+        let fila = [], falando = false, avisos = [], idxA = 0, histItems = [];
 
         setInterval(() => { document.getElementById('relogio').innerText = new Date().toLocaleTimeString(); }, 1000);
 
@@ -73,12 +99,14 @@
         async function processar() {
             if (falando || fila.length === 0) return;
             falando = true;
-            clearTimeout(timerAviso);
             document.getElementById('tela-aviso').style.display = 'none';
             const d = fila.shift();
             
-            document.getElementById('nome').innerText = (d.tipo === 'senha_normal' ? 'NORMAL ' : d.tipo === 'senha_pref' ? 'PREF ' : '') + d.nome;
+            const textoVisual = (d.tipo === 'senha_normal' ? 'NORMAL ' : d.tipo === 'senha_pref' ? 'PREF ' : '') + d.nome;
+            document.getElementById('nome').innerText = textoVisual;
             document.getElementById('local').innerText = d.local;
+            
+            adicionarAoHistorico(textoVisual, d.local);
             document.getElementById('bell').play();
 
             setTimeout(() => {
@@ -94,6 +122,21 @@
             }, 1200);
         }
 
+        function adicionarAoHistorico(nome, local) {
+            const painel = document.getElementById('historico');
+            const item = document.createElement('div');
+            item.className = 'hist-item';
+            item.innerHTML = `<span class="hist-nome">${nome}</span><span class="hist-local">${local}</span>`;
+            
+            // Insere no topo após o título
+            painel.insertBefore(item, painel.childNodes[2]);
+            
+            // Mantém apenas as últimas 4
+            if (painel.getElementsByClassName('hist-item').length > 4) {
+                painel.removeChild(painel.lastChild);
+            }
+        }
+
         onValue(ref(db, 'avisos'), (s) => { avisos = []; s.forEach(a => avisos.push(a.val())); if(!falando) rotate(); });
 
         function rotate() {
@@ -101,20 +144,9 @@
             const bar = document.getElementById('p-bar');
             document.getElementById('tela-aviso').style.display = 'flex';
             document.getElementById('txt-aviso').innerText = avisos[idxA].texto;
-            
-            // Reinicia a barra
-            bar.style.transition = 'none';
-            bar.style.width = '100%';
-            
-            setTimeout(() => {
-                bar.style.transition = 'width 8s linear';
-                bar.style.width = '0%';
-            }, 100);
-
-            timerAviso = setTimeout(() => { 
-                idxA = (idxA + 1) % avisos.length; 
-                if(!falando) rotate(); 
-            }, 8100);
+            bar.style.transition = 'none'; bar.style.width = '100%';
+            setTimeout(() => { bar.style.transition = 'width 8s linear'; bar.style.width = '0%'; }, 100);
+            setTimeout(() => { idxA = (idxA + 1) % avisos.length; if(!falando) rotate(); }, 8100);
         }
     </script>
 </body>
