@@ -12,9 +12,14 @@
         .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         #nome { font-size: 9rem; color: #ffcc00; font-weight: 900; margin: 0; text-transform: uppercase; text-shadow: 4px 4px 15px rgba(0,0,0,0.6); text-align: center; }
         .box { background: white; color: #002b5c; padding: 15px 80px; border-radius: 60px; font-size: 4.5rem; font-weight: 900; margin-top: 30px; box-shadow: 0 15px 30px rgba(0,0,0,0.4); text-transform: uppercase; }
+        
+        /* Estilo da Barra de Progresso e Aviso */
         .aviso-overlay { position: absolute; top: 140px; bottom: 0; left: 0; right: 0; background: #002b5c; display: none; align-items: center; justify-content: center; z-index: 10; }
-        .aviso-card { background: white; color: #333; width: 85%; padding: 60px; border-radius: 25px; text-align: center; border-left: 25px solid #28a745; box-shadow: 0 30px 60px rgba(0,0,0,0.6); }
-        .aviso-txt { font-size: 4rem; font-weight: bold; }
+        .aviso-card { background: white; color: #333; width: 85%; padding: 60px; border-radius: 25px; text-align: center; position: relative; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.6); }
+        .progress-container { position: absolute; top: 0; left: 0; width: 100%; height: 12px; background: #eee; }
+        .progress-bar { height: 100%; background: #28a745; width: 100%; transition: width 8s linear; }
+        .aviso-txt { font-size: 4rem; font-weight: bold; margin-top: 20px; }
+
         .footer { height: 70px; background: rgba(0,0,0,0.4); display: flex; align-items: center; padding: 0 50px; font-size: 1.3rem; border-top: 1px solid rgba(255,255,255,0.1); color: #aaa; }
     </style>
 </head>
@@ -29,7 +34,8 @@
     </div>
     <div class="aviso-overlay" id="tela-aviso">
         <div class="aviso-card">
-            <div style="color:#28a745; font-size:1.5rem; font-weight:bold; margin-bottom:20px;">INFORMATIVO</div>
+            <div class="progress-container"><div class="progress-bar" id="p-bar"></div></div>
+            <div style="color:#28a745; font-size:1.5rem; font-weight:bold; margin-top:10px;">INFORMATIVO DA UNIDADE</div>
             <div class="aviso-txt" id="txt-aviso"></div>
         </div>
     </div>
@@ -53,7 +59,7 @@
         const app = initializeApp(config);
         const db = getDatabase(app);
         const horaDeAbertura = Date.now();
-        let fila = [], falando = false, avisos = [], idxA = 0;
+        let fila = [], falando = false, avisos = [], idxA = 0, timerAviso;
 
         setInterval(() => { document.getElementById('relogio').innerText = new Date().toLocaleTimeString(); }, 1000);
 
@@ -67,6 +73,7 @@
         async function processar() {
             if (falando || fila.length === 0) return;
             falando = true;
+            clearTimeout(timerAviso);
             document.getElementById('tela-aviso').style.display = 'none';
             const d = fila.shift();
             
@@ -88,11 +95,26 @@
         }
 
         onValue(ref(db, 'avisos'), (s) => { avisos = []; s.forEach(a => avisos.push(a.val())); if(!falando) rotate(); });
+
         function rotate() {
             if(falando || avisos.length === 0) return;
+            const bar = document.getElementById('p-bar');
             document.getElementById('tela-aviso').style.display = 'flex';
             document.getElementById('txt-aviso').innerText = avisos[idxA].texto;
-            setTimeout(() => { idxA = (idxA + 1) % avisos.length; if(!falando) rotate(); }, 8000);
+            
+            // Reinicia a barra
+            bar.style.transition = 'none';
+            bar.style.width = '100%';
+            
+            setTimeout(() => {
+                bar.style.transition = 'width 8s linear';
+                bar.style.width = '0%';
+            }, 100);
+
+            timerAviso = setTimeout(() => { 
+                idxA = (idxA + 1) % avisos.length; 
+                if(!falando) rotate(); 
+            }, 8100);
         }
     </script>
 </body>
