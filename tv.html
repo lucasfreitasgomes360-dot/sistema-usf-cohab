@@ -34,7 +34,7 @@
 </head>
 <body>
     <div id="setup-som">
-        <button onclick="iniciarSom()" style="padding:30px 60px; font-size:2rem; font-weight:900; cursor:pointer; border-radius:20px; border:none; background:var(--accent); color:var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">🔊 LIGAR SOM DA TV</button>
+        <button onclick="iniciarSom()" style="padding:30px 60px; font-size:2rem; font-weight:900; cursor:pointer; border-radius:20px; border:none; background:var(--accent); color:var(--primary);">🔊 LIGAR SOM DA TV</button>
     </div>
 
     <div class="header">
@@ -45,7 +45,6 @@
     <div class="main-content">
         <h1 id="nome">AGUARDANDO</h1>
         <div class="box-local" id="local">SISTEMA ATIVO</div>
-        
         <div class="aviso-overlay" id="tela-aviso">
             <div class="aviso-card">
                 <div id="txt-aviso"></div>
@@ -72,11 +71,13 @@
 
         window.iniciarSom = () => { 
             document.getElementById('setup-som').style.display='none';
-            window.speechSynthesis.speak(new SpeechSynthesisUtterance("Sistema iniciado."));
+            window.speechSynthesis.speak(new SpeechSynthesisUtterance("Voz ativada."));
         };
 
         setInterval(() => { document.getElementById('relogio').innerText = new Date().toLocaleTimeString(); }, 1000);
         
+        onValue(ref(db, 'config/corAviso'), (s) => { if(s.val()) document.documentElement.style.setProperty('--cor-dinamica', s.val()); });
+
         onChildAdded(ref(db, 'fila'), (s) => { 
             if (s.val().timestamp > inicio) { fila.push(s.val()); processar(); } 
         });
@@ -103,23 +104,18 @@
                 let loc = d.local.toUpperCase();
                 let prep = (loc.includes("TRIAGEM") || loc.includes("RECEPÇÃO") || loc.includes("SALA") || loc.includes("ODONTOLOGIA") || loc.includes("VACINA") || loc.includes("COLETA")) ? "à" : "ao";
                 
-                // LÓGICA DE VOZ MELHORADA
                 let frase = "";
                 if (d.tipo === 'SENHA') {
-                    let tipoTexto = "Normal";
-                    if (d.subtipo === 'PREF') tipoTexto = "Preferencial";
-                    if (d.subtipo === 'COLETA') tipoTexto = "de Coleta";
-                    
-                    frase = `Atenção. Senha ${tipoTexto}. Número ${d.nome}. Dirija-se ${prep} ${d.local}`;
+                    let txtTipo = "normal";
+                    if (d.subtipo === 'PREF') txtTipo = "preferencial";
+                    if (d.subtipo === 'COLETA') txtTipo = "de coleta";
+                    frase = `Atenção. Senha ${txtTipo}. Número ${d.nome}. Dirija-se ${prep} ${d.local}`;
                 } else {
                     frase = `Atenção. Paciente. ${d.nome}. Dirija-se ${prep} ${d.local}`;
                 }
 
                 const v = new SpeechSynthesisUtterance(frase);
-                v.lang = 'pt-BR'; 
-                v.rate = 0.8; // Um pouco mais devagar para clareza
-                v.pitch = 1.1; // Tom levemente mais agudo para destacar
-                
+                v.lang = 'pt-BR'; v.rate = 0.8;
                 v.onend = () => { 
                     setTimeout(() => { falando = false; if(fila.length > 0) processar(); else rotate(); }, 3000); 
                 };
@@ -137,14 +133,9 @@
             const bar = document.getElementById('p-bar');
             document.getElementById('tela-aviso').style.display = 'flex';
             document.getElementById('txt-aviso').innerText = avisos[idxA].texto;
-            
             bar.style.transition = 'none'; bar.style.width = '100%';
             setTimeout(() => { bar.style.transition = 'width 8s linear'; bar.style.width = '0%'; }, 100);
-
-            setTimeout(() => { 
-                idxA = (idxA + 1) % avisos.length; 
-                if(!falando) rotate(); 
-            }, 8100);
+            setTimeout(() => { idxA = (idxA + 1) % avisos.length; if(!falando) rotate(); }, 8100);
         }
     </script>
 </body>
