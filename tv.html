@@ -2,40 +2,78 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>TV USF COHAB</title>
+    <title>Monitor TV - USF</title>
     <style>
-        body { margin: 0; background: #001a33; color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
-        .header { background: white; color: #003366; padding: 15px 50px; display: flex; justify-content: space-between; border-bottom: 8px solid #d9534f; }
-        .header h1 { margin: 0; font-size: 2.8rem; text-transform: uppercase; font-weight: 900; }
-        .header h2 { margin: 0; font-size: 1.2rem; color: #d9534f; font-weight: bold; }
-        .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        #nome { font-size: 8.5rem; font-weight: 900; margin: 0; color: #fff; text-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        #local { font-size: 4.5rem; color: #5cb85c; font-weight: bold; margin-top: -10px; }
-        .hist { height: 160px; background: rgba(255,255,255,0.05); display: flex; gap: 20px; padding: 15px; border-top: 2px solid rgba(255,255,255,0.1); }
-        .hist-card { background: white; color: #333; padding: 15px; border-radius: 12px; min-width: 250px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .footer-aviso { height: 70px; background: #003366; position: relative; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: bold; }
-        .bar { position: absolute; bottom: 0; left: 0; height: 6px; background: #5cb85c; width: 0%; }
+        :root { --bg-dark: #002b5c; --yellow: #ffcc00; }
+        body { margin: 0; background: var(--bg-dark); color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+        
+        /* Cabeçalho Fiel à Imagem */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; border-bottom: 4px solid var(--yellow); }
+        .header-left h1 { margin: 0; font-size: 2.5rem; font-weight: 900; letter-spacing: 1px; }
+        .header-left h2 { margin: 0; font-size: 1.2rem; color: var(--yellow); font-weight: bold; }
+        .header-right { text-align: right; }
+        .time { font-size: 3.5rem; color: var(--yellow); font-weight: bold; line-height: 1; }
+        .date { font-size: 1.2rem; }
+
+        /* Área de Chamada Principal */
+        .main-call { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2; }
+        .nome-paciente { font-size: 7vw; color: var(--yellow); font-weight: 900; text-shadow: 4px 4px 10px rgba(0,0,0,0.6); margin: 0 0 20px 0; text-align: center; text-transform: uppercase; line-height: 1.1; }
+        .box-setor { background: white; color: var(--bg-dark); padding: 15px 50px; border-radius: 20px; font-size: 4vw; font-weight: bold; text-transform: capitalize; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+
+        /* Rodapé de Histórico Fiel à Imagem */
+        .footer { background: rgba(0, 0, 0, 0.2); padding: 10px 40px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); }
+        .hist-item { display: flex; align-items: center; border-left: 4px solid var(--yellow); padding-left: 15px; }
+        .hist-nome { font-weight: bold; font-size: 1.2rem; display: block; }
+        .hist-local { font-size: 1rem; color: #ccc; }
+        .dev-info { text-align: right; font-size: 0.8rem; color: rgba(255,255,255,0.5); }
+
+        /* Tela de Informativos (Avisos) */
+        .aviso-container { position: absolute; top: 120px; left: 0; right: 0; bottom: 80px; display: none; align-items: center; justify-content: center; background: var(--bg-dark); z-index: 10; }
+        .aviso-card { background: white; width: 80%; padding: 40px; border-radius: 15px; border-left: 15px solid #00e676; text-align: center; color: #333; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .aviso-tag { color: #888; font-weight: bold; letter-spacing: 2px; margin-bottom: 20px; font-size: 1.2rem; }
+        .aviso-texto { font-size: 3.5rem; font-weight: bold; line-height: 1.3; color: #333; }
+        .progress-bar { position: absolute; bottom: 0; left: 0; height: 8px; background: #00e676; width: 0%; border-bottom-left-radius: 15px; }
+        
+        /* Mostrar aviso */
+        .aviso-container.show { display: flex; }
     </style>
 </head>
 <body>
+
     <div class="header">
-        <div>
+        <div class="header-left">
             <h1>USF COHAB</h1>
             <h2>Dr. Joao Pereira da Rosa</h2>
         </div>
-        <div id="relogio" style="font-size: 2.2rem; font-weight: bold; text-align: right;"></div>
+        <div class="header-right">
+            <div class="time" id="relogio-hora">00:00:00</div>
+            <div class="date" id="relogio-data">Carregando...</div>
+        </div>
     </div>
 
-    <div class="main">
-        <h1 id="nome">AGUARDANDO</h1>
-        <h2 id="local">SISTEMA ATIVO</h2>
+    <div class="main-call" id="tela-chamada">
+        <div class="nome-paciente" id="display-nome">SISTEMA ATIVO</div>
+        <div class="box-setor" id="display-local">Aguardando Chamadas...</div>
     </div>
 
-    <div class="hist" id="historico"></div>
+    <div class="aviso-container" id="tela-aviso">
+        <div class="aviso-card">
+            <div class="aviso-tag">INFORMATIVO</div>
+            <div class="aviso-texto" id="texto-informativo">Bem-vindo à unidade.</div>
+            <div class="progress-bar" id="barra-progresso"></div>
+        </div>
+    </div>
 
-    <div class="footer-aviso" id="fa">
-        <div id="aviso-txt">Bem-vindos à Unidade de Saúde</div>
-        <div class="bar" id="bar"></div>
+    <div class="footer">
+        <div class="hist-item" id="historico-rodape">
+            <div>
+                <span class="hist-nome" id="hist-n">SISTEMA</span>
+                <span class="hist-local" id="hist-l">Online</span>
+            </div>
+        </div>
+        <div class="dev-info">
+            Desenvolvido por Lucas Freitas Gomes © 2026<br> USF Cohab
+        </div>
     </div>
 
     <audio id="bell" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
@@ -57,58 +95,133 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        let fila = [], falando = false, avisos = [], idxA = 0;
+        // Relógio e Data
+        const dias = ['Domingo', 'Segunda-Feira', 'Terça-Feira', 'Quarta-Feira', 'Quinta-Feira', 'Sexta-Feira', 'Sábado'];
+        const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        
+        setInterval(() => { 
+            const agora = new Date();
+            document.getElementById('relogio-hora').innerText = agora.toLocaleTimeString('pt-BR'); 
+            document.getElementById('relogio-data').innerText = `${dias[agora.getDay()]}, ${agora.getDate()} De ${meses[agora.getMonth()]} De ${agora.getFullYear()}`;
+        }, 1000);
 
-        // Relógio
-        setInterval(() => { document.getElementById('relogio').innerText = new Date().toLocaleTimeString(); }, 1000);
+        // Variáveis de Controle
+        let filaChamadas = [];
+        let falando = false;
+        let listaAvisos = [];
+        let indexAviso = 0;
+        let timeoutAviso = null;
 
         // Monitor de Chamadas
-        onChildAdded(ref(db, 'fila'), (s) => { 
-            fila.push(s.val()); 
-            process(); 
+        onChildAdded(ref(db, 'fila'), (snapshot) => { 
+            filaChamadas.push(snapshot.val()); 
+            processarFila(); 
         });
 
-        async function process() {
-            if (falando || fila.length === 0) return;
+        async function processarFila() {
+            // Se já estiver falando ou fila vazia, não faz nada (Evita atropelos)
+            if (falando || filaChamadas.length === 0) return;
+            
             falando = true;
-            const d = fila.shift();
             
-            document.getElementById('nome').innerText = d.nome;
-            document.getElementById('local').innerText = d.local;
-            document.getElementById('bell').play();
-            
-            // Histórico Visual
-            const h = document.getElementById('historico');
-            const card = `<div class="hist-card"><b>${d.nome}</b><br><small>${d.local}</small></div>`;
-            h.innerHTML = card + h.innerHTML;
-            if(h.children.length > 5) h.removeChild(h.lastChild);
+            // Pausa os avisos e mostra a tela principal
+            document.getElementById('tela-aviso').classList.remove('show');
+            clearTimeout(timeoutAviso);
 
-            // Voz
-            const msg = new SpeechSynthesisUtterance(`${d.tipo === 'senha' ? 'Atenção, senha' : 'Atenção, paciente'}, ${d.nome}. Compareça ao setor ${d.local}`);
-            msg.lang = 'pt-BR';
-            msg.onend = () => { setTimeout(() => { falando = false; process(); }, 3000); };
-            window.speechSynthesis.speak(msg);
+            const dados = filaChamadas.shift();
+            
+            // Formatar exibição visual
+            let nomeExibicao = dados.nome;
+            if (dados.tipo === 'senha_normal') nomeExibicao = "NORMAL " + dados.nome;
+            if (dados.tipo === 'senha_pref') nomeExibicao = "PREF " + dados.nome;
+
+            document.getElementById('display-nome').innerText = nomeExibicao;
+            document.getElementById('display-local').innerText = dados.local;
+            
+            // Atualiza Rodapé (Histórico)
+            document.getElementById('hist-n').innerText = nomeExibicao;
+            document.getElementById('hist-l').innerText = dados.local;
+
+            // Toca a Campainha
+            const sino = document.getElementById('bell');
+            sino.currentTime = 0;
+            sino.play();
+            
+            // Espera a campainha tocar para falar
+            setTimeout(() => {
+                let textoFalar = "";
+                
+                // Concordância e Regras de Voz solicitadas
+                if (dados.tipo === 'senha_normal') {
+                    textoFalar = `Atenção, senha ${dados.nome}. Compareça à ${dados.local}`;
+                } else if (dados.tipo === 'senha_pref') {
+                    textoFalar = `Atenção, senha preferencial ${dados.nome}. Compareça à ${dados.local}`;
+                } else {
+                    // Para nomes, usamos "paciente" que serve para ambos os gêneros
+                    textoFalar = `Atenção, paciente ${dados.nome}. Compareça à ${dados.local}`;
+                }
+
+                const voz = new SpeechSynthesisUtterance(textoFalar);
+                voz.lang = 'pt-BR';
+                voz.rate = 0.85; // Velocidade um pouco mais calma
+                
+                // Quando terminar de falar, espera 2 segundos e chama o próximo
+                voz.onend = () => { 
+                    setTimeout(() => { 
+                        falando = false; 
+                        
+                        // Se não tiver mais ninguém na fila, inicia contador para mostrar os avisos
+                        if(filaChamadas.length === 0) {
+                            timeoutAviso = setTimeout(iniciarCarrosselAvisos, 10000); // Mostra avisos após 10 seg de silêncio
+                        } else {
+                            processarFila(); 
+                        }
+                    }, 2000); 
+                };
+                
+                window.speechSynthesis.speak(voz);
+            }, 1500);
         }
 
-        // Avisos Carrossel
-        onValue(ref(db, 'avisos'), (s) => { 
-            avisos = []; 
-            s.forEach(a => avisos.push(a.val())); 
-            if(avisos.length) rotate(); 
+        // Monitor de Avisos
+        onValue(ref(db, 'avisos'), (snapshot) => { 
+            listaAvisos = []; 
+            snapshot.forEach(child => listaAvisos.push(child.val())); 
+            if(listaAvisos.length > 0 && !falando && filaChamadas.length === 0) {
+                iniciarCarrosselAvisos();
+            } else if (listaAvisos.length === 0) {
+                document.getElementById('tela-aviso').classList.remove('show');
+            }
         });
         
-        function rotate() {
-            if(falando || !avisos.length) return;
-            const a = avisos[idxA];
-            document.getElementById('aviso-txt').innerText = a.texto;
-            document.getElementById('fa').style.backgroundColor = a.cor;
-            let w = 0;
-            const b = document.getElementById('bar');
-            const i = setInterval(() => {
-                if(falando) { b.style.width='0%'; clearInterval(i); return; }
-                w += 1; b.style.width = w + '%';
-                if(w >= 100) { clearInterval(i); idxA = (idxA + 1) % avisos.length; rotate(); }
-            }, 60);
+        function iniciarCarrosselAvisos() {
+            if(falando || listaAvisos.length === 0) return;
+            
+            document.getElementById('tela-aviso').classList.add('show');
+            const avisoAtual = listaAvisos[indexAviso];
+            document.getElementById('texto-informativo').innerText = avisoAtual.texto;
+            
+            // Barra de Progresso do Aviso
+            let progresso = 0;
+            const barra = document.getElementById('barra-progresso');
+            barra.style.width = '0%';
+            
+            const intervaloAnimacao = setInterval(() => {
+                if(falando) { // Interrompe se alguém for chamado
+                    clearInterval(intervaloAnimacao);
+                    document.getElementById('tela-aviso').classList.remove('show');
+                    return; 
+                }
+                
+                progresso += 0.5; // Velocidade da barra
+                barra.style.width = progresso + '%';
+                
+                if(progresso >= 100) {
+                    clearInterval(intervaloAnimacao);
+                    indexAviso = (indexAviso + 1) % listaAvisos.length;
+                    iniciarCarrosselAvisos(); // Chama o próximo aviso
+                }
+            }, 50);
         }
     </script>
 </body>
