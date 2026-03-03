@@ -3,114 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA USF COHAB</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>SISTEMA USF COHAB - OFICIAL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #002b5c; --accent: #2ecc71; --pref: #e67e22; --coleta: #8e44ad; --bg: #f4f7fa; }
-        body { font-family: 'Montserrat', sans-serif; background: var(--bg); margin: 0; padding: 15px; display: flex; justify-content: center; color: #333; }
-        .app-container { background: white; width: 100%; max-width: 450px; border-radius: 35px; padding: 25px; box-shadow: 0 30px 60px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.7); }
+        body { font-family: 'Montserrat', sans-serif; background: var(--bg); margin: 0; padding: 15px; display: flex; justify-content: center; }
+        .app-container { background: white; width: 100%; max-width: 480px; border-radius: 30px; padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .brand { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .brand h1 { font-weight: 900; color: var(--primary); margin: 0; font-size: 1.4rem; }
         
-        .brand { text-align: center; margin-bottom: 25px; }
-        .brand h1 { font-weight: 800; font-size: 1.5rem; color: var(--primary); margin: 0; letter-spacing: -1px; }
-        .brand p { font-size: 0.7rem; font-weight: 600; color: #d9534f; text-transform: uppercase; margin: 2px 0; }
-
-        label { display: block; font-size: 0.65rem; font-weight: 800; color: #a1acc1; margin: 15px 0 6px 5px; text-transform: uppercase; }
-        select, input { width: 100%; padding: 14px; border-radius: 16px; border: 2px solid #edf2f7; background: #f8fafc; font-size: 0.95rem; font-weight: 600; font-family: inherit; transition: 0.3s; box-sizing: border-box; }
-        select:focus, input:focus { border-color: var(--primary); outline: none; background: #fff; box-shadow: 0 10px 20px rgba(0,43,92,0.05); }
-
-        .btn { width: 100%; padding: 16px; border: none; border-radius: 18px; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; cursor: pointer; color: white; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); margin-top: 10px; display: flex; align-items: center; justify-content: center; }
-        .btn-call { background: linear-gradient(135deg, #002b5c, #0056b3); box-shadow: 0 8px 15px rgba(0,43,92,0.2); }
-        .btn-pref { background: linear-gradient(135deg, #f39c12, #e67e22); box-shadow: 0 8px 15px rgba(230,126,34,0.2); }
-        .btn-coleta { background: linear-gradient(135deg, #8e44ad, #9b59b6); box-shadow: 0 8px 15px rgba(142,68,173,0.2); }
-        .btn-update { background: linear-gradient(135deg, #27ae60, #2ecc71); box-shadow: 0 8px 15px rgba(39,174,96,0.2); }
+        label { display: block; font-size: 0.7rem; font-weight: 800; color: #778ca3; margin: 15px 0 5px; text-transform: uppercase; }
+        select, input, textarea { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #edf2f7; font-size: 1rem; font-weight: 600; font-family: inherit; box-sizing: border-box; }
         
-        .btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
-        .btn:active { transform: translateY(1px); }
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; text-transform: uppercase; cursor: pointer; color: white; margin-top: 10px; transition: 0.2s; }
+        .btn-call { background: var(--primary); }
+        .btn-update { background: var(--accent); }
+        .btn:active { transform: scale(0.98); }
 
-        /* Histórico Individual */
-        .history-box { margin-top: 25px; background: #f8fafc; border-radius: 20px; padding: 15px; border: 1px dashed #cbd5e0; }
-        .history-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border-radius: 12px; margin-bottom: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
-        .history-info { font-size: 0.8rem; font-weight: 700; color: var(--primary); }
-        .btn-recall { background: #eef2f7; color: var(--primary); border: none; padding: 6px 12px; border-radius: 8px; font-size: 0.65rem; font-weight: 800; cursor: pointer; transition: 0.2s; }
-        .btn-recall:hover { background: var(--primary); color: white; }
-
-        .section { display: none; animation: fadeIn 0.4s ease; }
+        .section { display: none; animation: slideIn 0.3s ease-out; }
         .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .mirror-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px; }
-        .mirror-unit { background: #f1f4f8; padding: 10px; border-radius: 15px; text-align: center; }
-        .mirror-val { display: block; font-size: 1.2rem; font-weight: 800; color: var(--primary); }
+        .history-box { margin-top: 20px; background: #f8fafc; border-radius: 15px; padding: 10px; border: 1px solid #eee; }
+        .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: white; border-radius: 10px; margin-bottom: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 0.8rem; }
+        .btn-re { background: #eee; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: 700; font-size: 0.6rem; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <div class="brand">
-        <h1>USF COHAB</h1>
-        <p>Dr. João Pereira da Rosa</p>
-    </div>
+    <div class="brand"><h1>USF COHAB</h1><p style="color:#d9534f; font-weight:bold; font-size:0.7rem; margin:0;">DR. JOÃO PEREIRA DA ROSA</p></div>
 
-    <label>Área de Atuação</label>
-    <select id="main-setor" onchange="switchSection()">
-        <option value="">Selecione o setor...</option>
-        <option value="acolhimento">🎫 Acolhimento (Entregar Senhas)</option>
-        <option value="recepcao">🏢 Recepção (Chamar Senhas)</option>
-        <option value="medico">👨‍⚕️ Médicos (Atendimento Especializado)</option>
-        <option value="gerencia">⚙️ Gerência de Avisos</option>
+    <label>SELECIONE SEU SETOR</label>
+    <select id="main-setor" onchange="showSec()">
+        <option value="">Escolher...</option>
+        <option value="acolhimento">🎫 ACOLHIMENTO (ENTREGA)</option>
+        <option value="recepcao">🏢 RECEPÇÃO (SENHAS)</option>
+        <option value="medico">👨‍⚕️ MÉDICOS</option>
+        <option value="enfermagem">👩‍⚕️ ENFERMAGEM / TRIAGEM</option>
+        <option value="odonto">🦷 ODONTOLOGIA</option>
+        <option value="social">🤝 ASSISTENTE SOCIAL</option>
+        <option value="gerencia">⚙️ GERÊNCIA</option>
     </select>
 
     <div id="sec-acolhimento" class="section">
-        <label>Registrar última senha entregue</label>
-        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
-            <input type="number" id="in-n" placeholder="Nrm">
-            <input type="number" id="in-p" placeholder="Prf">
-            <input type="number" id="in-c" placeholder="Clt">
+        <label>ÚLTIMAS ENTREGUES</label>
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:5px;">
+            <input type="number" id="in-n" placeholder="Normal">
+            <input type="number" id="in-p" placeholder="Pref">
+            <input type="number" id="in-c" placeholder="Coleta">
         </div>
-        <button class="btn btn-update" onclick="syncNumbers()">Sincronizar Entrega</button>
+        <button class="btn btn-update" onclick="sync()">ATUALIZAR ENTREGAS</button>
     </div>
 
     <div id="sec-recepcao" class="section">
-        <div class="mirror-grid">
-            <div class="mirror-unit"><span class="mirror-label" style="font-size:0.5rem">NORMAL</span><span class="mirror-val" id="m-n">0</span></div>
-            <div class="mirror-unit"><span class="mirror-label" style="font-size:0.5rem;color:var(--pref)">PREF</span><span class="mirror-val" id="m-p" style="color:var(--pref)">0</span></div>
-            <div class="mirror-unit"><span class="mirror-label" style="font-size:0.5rem;color:var(--coleta)">COLETA</span><span class="mirror-val" id="m-c" style="color:var(--coleta)">0</span></div>
-        </div>
-        <label>Local de Chamada</label>
-        <select id="loc-recepcao">
-            <option value="RECEPÇÃO 01">Recepção 01</option>
-            <option value="RECEPÇÃO 02">Recepção 02</option>
-            <option value="RECEPÇÃO 03">Recepção 03</option>
-        </select>
-        <button class="btn btn-call" onclick="callNext('NORMAL', 'loc-recepcao')">Chamar Normal</button>
-        <button class="btn btn-pref" onclick="callNext('PREF', 'loc-recepcao')">Chamar Preferencial</button>
-        <button class="btn btn-coleta" onclick="callNext('COLETA', 'loc-recepcao')">Chamar Coleta</button>
-        <div class="history-box" id="hist-recepcao"><label>Minhas Últimas Chamadas</label></div>
+        <label>LOCAL</label>
+        <select id="loc-recepcao"><option value="RECEPÇÃO 01">RECEPÇÃO 01</option><option value="RECEPÇÃO 02">RECEPÇÃO 02</option></select>
+        <button class="btn btn-call" onclick="call('NORMAL', 'loc-recepcao')">CHAMAR NORMAL</button>
+        <button class="btn btn-call" style="background:var(--pref)" onclick="call('PREF', 'loc-recepcao')">CHAMAR PREFERENCIAL</button>
+        <button class="btn btn-call" style="background:var(--coleta)" onclick="call('COLETA', 'loc-recepcao')">CHAMAR COLETA</button>
+        <div class="history-box" id="h-recepcao"><label>ÚLTIMAS CHAMADAS</label></div>
     </div>
 
     <div id="sec-medico" class="section">
-        <label>Especialidade</label>
-        <input type="text" value="MÉDICOS" disabled style="background:#e2e8f0; color:#64748b">
-        <label>Consultório</label>
-        <select id="loc-medico">
-            <option value="CONSULTÓRIO 01">Consultório 01</option>
-            <option value="CONSULTÓRIO 02">Consultório 02</option>
-        </select>
-        <label>Nome do Paciente</label>
-        <input type="text" id="nome-paciente" placeholder="Digite o nome aqui...">
-        <button class="btn btn-call" onclick="callPatient('nome-paciente', 'loc-medico')">Chamar Paciente</button>
-        <div class="history-box" id="hist-medico"><label>Minhas Últimas Chamadas</label></div>
+        <label>CONSULTÓRIO</label>
+        <select id="loc-medico"><option value="CONSULTÓRIO 01">CONSULTÓRIO 01</option><option value="CONSULTÓRIO 02">CONSULTÓRIO 02</option></select>
+        <label>NOME DO(A) PACIENTE</label>
+        <input type="text" id="nome-med" placeholder="Nome completo">
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <button class="btn btn-call" onclick="callP('nome-med', 'loc-medico', 'F')">CHAMAR ELA ♀</button>
+            <button class="btn btn-call" style="background:#3498db" onclick="callP('nome-med', 'loc-medico', 'M')">CHAMAR ELE ♂</button>
+        </div>
+        <div class="history-box" id="h-medico"><label>ÚLTIMAS CHAMADAS</label></div>
+    </div>
+
+    <div id="sec-enfermagem" class="section">
+        <label>SALA</label>
+        <select id="loc-enf"><option value="TRIAGEM">TRIAGEM</option><option value="SALA DE VACINA">SALA DE VACINA</option><option value="SALA DE CURATIVOS">SALA DE CURATIVOS</option></select>
+        <input type="text" id="nome-enf" placeholder="Nome do(a) paciente">
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <button class="btn btn-call" onclick="callP('nome-enf', 'loc-enf', 'F')">CHAMAR ELA</button>
+            <button class="btn btn-call" style="background:#3498db" onclick="callP('nome-enf', 'loc-enf', 'M')">CHAMAR ELE</button>
+        </div>
+        <div class="history-box" id="h-enfermagem"></div>
+    </div>
+
+    <div id="sec-odonto" class="section">
+        <input type="text" id="nome-odonto" placeholder="Paciente Odonto">
+        <button class="btn btn-call" onclick="callP('nome-odonto', 'ODONTOLOGIA', 'F')">CHAMAR ELA</button>
+        <button class="btn btn-call" style="background:#3498db" onclick="callP('nome-odonto', 'ODONTOLOGIA', 'M')">CHAMAR ELE</button>
+    </div>
+
+    <div id="sec-social" class="section">
+        <input type="text" id="nome-social" placeholder="Paciente Social">
+        <button class="btn btn-call" onclick="callP('nome-social', 'ASSISTENTE SOCIAL', 'F')">CHAMAR ELA</button>
+        <button class="btn btn-call" style="background:#3498db" onclick="callP('nome-social', 'ASSISTENTE SOCIAL', 'M')">CHAMAR ELE</button>
     </div>
 
     <div id="sec-gerencia" class="section">
-        <label>Cor do Painel TV</label>
-        <input type="color" id="cor-tv" onchange="updateColor()" value="#002b5c" style="height:50px; padding:5px;">
-        <label>Novo Aviso</label>
-        <textarea id="txt-aviso" placeholder="Escreva o aviso..." style="width:100%; border-radius:15px; border:2px solid #edf2f7; padding:10px;"></textarea>
-        <button class="btn btn-update" onclick="sendAviso()">Publicar Aviso</button>
-        <div id="lista-geral-avisos"></div>
+        <label>COR DA TV</label>
+        <input type="color" id="cor-tv" onchange="upColor()" value="#002b5c">
+        <label>NOVO AVISO</label>
+        <textarea id="msg" placeholder="Aviso..."></textarea>
+        <button class="btn btn-update" onclick="addA()">PUBLICAR</button>
+        <div id="l-avisos"></div>
     </div>
-
 </div>
 
 <script type="module">
@@ -120,21 +117,13 @@
     const config = { databaseURL: "https://sistema-usf-cohab-default-rtdb.firebaseio.com" };
     const db = getDatabase(initializeApp(config));
 
-    // Monitor de senhas do Acolhimento
-    onValue(ref(db, 'contadores'), (s) => {
-        const d = s.val() || {normal:0, pref:0, coleta:0};
-        document.getElementById('m-n').innerText = d.normal;
-        document.getElementById('m-p').innerText = d.pref;
-        document.getElementById('m-c').innerText = d.coleta || 0;
-    });
-
-    window.switchSection = () => {
+    window.showSec = () => {
         const v = document.getElementById('main-setor').value;
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         if(v) document.getElementById('sec-' + v).classList.add('active');
     };
 
-    window.syncNumbers = () => {
+    window.sync = () => {
         set(ref(db, 'contadores'), {
             normal: parseInt(document.getElementById('in-n').value) || 0,
             pref: parseInt(document.getElementById('in-p').value) || 0,
@@ -143,49 +132,40 @@
         alert("Sincronizado!");
     };
 
-    window.callNext = (tipo, locId) => {
+    // Função de Chamada por SENHA (RECEPÇÃO)
+    window.call = (tipo, locId) => {
         const local = document.getElementById(locId).value;
         runTransaction(ref(db, 'senhas_chamadas/' + tipo), (c) => (c || 0) + 1).then(r => {
-            const senha = r.snapshot.val();
-            const dados = { nome: senha, local, tipo: 'senha_' + tipo.toLowerCase(), timestamp: Date.now() };
+            const dados = { nome: r.snapshot.val(), local, tipo: 'SENHA', subtipo: tipo, timestamp: Date.now() };
             push(ref(db, 'fila'), dados);
-            addToHistory(locId.split('-')[1], dados);
+            addH(locId.split('-')[1], dados);
         });
     };
 
-    window.callPatient = (inpId, locId) => {
+    // Função de Chamada por NOME (MÉDICO/ENF/ETC)
+    window.callP = (inpId, locId, genero) => {
         const nome = document.getElementById(inpId).value.toUpperCase();
-        const local = document.getElementById(locId).value;
+        const local = document.getElementById(locId).value || locId;
         if(!nome) return;
-        const dados = { nome, local, tipo: 'paciente', timestamp: Date.now() };
+        const dados = { nome, local, tipo: 'PACIENTE', genero, timestamp: Date.now() };
         push(ref(db, 'fila'), dados);
-        addToHistory('medico', dados);
+        addH(locId.toLowerCase().includes('consult') ? 'medico' : 'enfermagem', dados);
         document.getElementById(inpId).value = "";
     };
 
-    function addToHistory(setor, dados) {
-        const container = document.getElementById('hist-' + setor);
-        const item = document.createElement('div');
-        item.className = 'history-item';
-        item.innerHTML = `
-            <div class="history-info">${dados.nome} <br><small style="color:#666">${dados.local}</small></div>
-            <button class="btn-recall" onclick="recall('${dados.nome}', '${dados.local}', '${dados.tipo}')">RECHAMAR</button>
-        `;
-        container.insertBefore(item, container.childNodes[1]);
-        if(container.children.length > 4) container.removeChild(container.lastChild);
+    function addH(setor, d) {
+        const c = document.getElementById('h-' + setor);
+        if(!c) return;
+        const div = document.createElement('div');
+        div.className = 'hist-item';
+        div.innerHTML = `<span>${d.nome}</span><button class="btn-re" onclick="re('${d.nome}','${d.local}','${d.tipo}','${d.genero||''}','${d.subtipo||''}')">RECHAMAR</button>`;
+        c.insertBefore(div, c.childNodes[1]);
+        if(c.children.length > 4) c.removeChild(c.lastChild);
     }
 
-    window.recall = (nome, local, tipo) => {
-        push(ref(db, 'fila'), { nome, local, tipo, timestamp: Date.now() });
-    };
-
-    window.sendAviso = () => {
-        const texto = document.getElementById('txt-aviso').value;
-        if(texto) { push(ref(db, 'avisos'), { texto }); document.getElementById('txt-aviso').value=""; }
-    };
-
-    window.updateColor = () => { set(ref(db, 'config/corAviso'), document.getElementById('cor-tv').value); };
-
+    window.re = (nome, local, tipo, genero, subtipo) => { push(ref(db, 'fila'), { nome, local, tipo, genero, subtipo, timestamp: Date.now() }); };
+    window.addA = () => { const t = document.getElementById('msg').value; if(t) push(ref(db, 'avisos'), { texto: t }); document.getElementById('msg').value=""; };
+    window.upColor = () => { set(ref(db, 'config/corAviso'), document.getElementById('cor-tv').value); };
 </script>
 </body>
 </html>
