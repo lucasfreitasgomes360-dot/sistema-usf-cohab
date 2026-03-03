@@ -3,54 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel USF COHAB</title>
+    <title>Painel - Sistema de Chamadas</title>
     <style>
-        :root { --primary: #003366; --red: #d9534f; --bg: #f0f2f5; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .card { background: white; width: 100%; max-width: 500px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 12px solid var(--primary); padding: 20px; }
-        .header { text-align: center; margin-bottom: 20px; }
-        .header h1 { color: var(--primary); margin: 0; font-size: 1.8rem; text-transform: uppercase; }
-        .header h2 { color: var(--red); margin: 0; font-size: 1rem; font-weight: bold; }
-        .step { display: none; } .step.active { display: block; }
-        .btn-menu { width: 100%; padding: 15px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; background: white; font-weight: bold; color: var(--primary); cursor: pointer; text-align: left; }
-        .btn-call { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-danger { background: #6c757d; font-size: 0.8rem; margin-top: 20px; opacity: 0.7; }
-        input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #333; border-radius: 8px; box-sizing: border-box; }
-        .btn-back { background: none; border: none; color: #666; cursor: pointer; text-decoration: underline; margin-bottom: 15px; }
-        .history-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px dashed #ccc; font-size: 0.9rem; }
+        :root { --primary: #002b5c; --red: #d9534f; --bg: #f4f6f9; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; padding: 40px 20px; }
+        .card { background: white; width: 100%; max-width: 500px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 10px solid var(--primary); padding: 30px; }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { color: var(--primary); margin: 0; font-size: 1.8rem; font-weight: 900; }
+        .header h2 { color: var(--red); margin: 5px 0 0; font-size: 1rem; font-weight: bold; }
+        
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; color: var(--primary); margin-bottom: 8px; font-size: 0.9rem; text-transform: uppercase; }
+        select, input, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
+        
+        .step { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; }
+        .step.active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .btn-call { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
+        .btn-pref { background: #f0ad4e; color: #fff; }
+        .btn-sync { background: #28a745; }
+        .btn-danger { background: #dc3545; font-size: 0.8rem; margin-top: 30px; opacity: 0.9; }
+        
+        .grid-sync { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
+
     <div class="card">
         <div class="header">
-            <h1>USF COHAB</h1>
-            <h2>Dr. Joao Pereira da Rosa</h2>
+            <h1>USF AERO RANCHO IV</h1> 
+            <h2>Dr. Nelson Tokuei Simabukuro</h2>
         </div>
 
-        <div id="step-menu" class="step active">
-            <button class="btn-menu" onclick="show('recepcao')">🏢 RECEPÇÃO (1, 2 e 3)</button>
-            <button class="btn-menu" onclick="show('acolhimento')">🏥 ACOLHIMENTO</button>
-            <button class="btn-menu" onclick="show('enfermagem')">👩‍⚕️ ENFERMAGEM</button>
-            <button class="btn-menu" onclick="show('gerencia')">⚙️ GERÊNCIA / AVISOS</button>
+        <div class="form-group">
+            <label>SELECIONE SEU SETOR</label>
+            <select id="menu-setor" onchange="mudarSetor()">
+                <option value="">-- Escolha o Setor --</option>
+                <option value="acolhimento">🎫 ACOLHIMENTO</option>
+                <option value="recepcao">🏢 RECEPÇÃO</option>
+                <option value="enfermagem">👩‍⚕️ ENFERMAGEM / MÉDICO</option>
+                <option value="gerencia">⚙️ GERÊNCIA / AVISOS</option>
+            </select>
+        </div>
+
+        <div id="setor-acolhimento" class="step">
+            <label>SINCRONIZAR SENHAS ENTREGUES</label>
+            <div class="grid-sync">
+                <input type="number" id="syncN" placeholder="Normal">
+                <input type="number" id="syncP" placeholder="Pref">
+                <input type="number" id="syncC" placeholder="Coleta">
+                <input type="number" id="syncO" placeholder="Odonto">
+            </div>
+            <button class="btn-call btn-sync" onclick="sync()">✅ SINCRONIZAR TUDO</button>
+            <hr style="border:0; border-top:1px dashed #ccc; margin:20px 0;">
+            <button class="btn-call" onclick="callT('NORMAL', 'ACOLHIMENTO')">CHAMAR NORMAL</button>
+            <button class="btn-call btn-pref" onclick="callT('PREF', 'ACOLHIMENTO')">CHAMAR PREFERENCIAL</button>
         </div>
 
         <div id="setor-recepcao" class="step">
-            <button class="btn-back" onclick="show('menu')">⬅ Voltar</button>
-            <h3>🏢 RECEPÇÃO</h3>
+            <label>GUICHÊ DE ATENDIMENTO</label>
             <select id="guiche-rep">
                 <option value="RECEPÇÃO 01">RECEPÇÃO 01</option>
                 <option value="RECEPÇÃO 02">RECEPÇÃO 02</option>
                 <option value="RECEPÇÃO 03">RECEPÇÃO 03</option>
             </select>
-            <button class="btn-call" onclick="callT('NORMAL', 'guiche-rep')">🎫 CHAMAR NORMAL</button>
-            <button class="btn-call" style="background:#f0ad4e" onclick="callT('PREF', 'guiche-rep')">♿ CHAMAR PREFERENCIAL</button>
+            <button class="btn-call" onclick="callT('NORMAL', 'guiche-rep')">CHAMAR NORMAL</button>
+            <button class="btn-call btn-pref" onclick="callT('PREF', 'guiche-rep')">CHAMAR PREFERENCIAL</button>
             
-            <div id="hist-recepcao"></div>
-
             <button class="btn-call btn-danger" onclick="resetSistema()">⚠️ ZERAR SENHAS DO DIA</button>
         </div>
 
+        <div id="setor-enfermagem" class="step">
+            <label>LOCAL DE DESTINO</label>
+            <select id="sala-enf">
+                <option value="TRIAGEM">TRIAGEM</option>
+                <option value="CONSULTÓRIO 01">CONSULTÓRIO 01</option>
+                <option value="CONSULTÓRIO 02">CONSULTÓRIO 02</option>
+                <option value="VACINA">SALA DE VACINA</option>
+            </select>
+            <label style="margin-top:15px;">NOME DO PACIENTE</label>
+            <input type="text" id="nome-enf" placeholder="Digite o nome completo" style="text-transform: uppercase;">
+            <button class="btn-call" onclick="callN('nome-enf', 'sala-enf')">CHAMAR PACIENTE</button>
         </div>
+
+        <div id="setor-gerencia" class="step">
+            <label>NOVO INFORMATIVO (TV)</label>
+            <textarea id="msg-aviso" rows="3" placeholder="Ex: Planejamento Familiar dia 25/03..."></textarea>
+            <button class="btn-call" onclick="addA()">PUBLICAR INFORMATIVO</button>
+            <button class="btn-call btn-danger" onclick="limparAvisos()">LIMPAR TODOS OS AVISOS</button>
+        </div>
+
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -69,33 +113,70 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        window.show = (id) => {
-            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-            document.getElementById(id === 'menu' ? 'step-menu' : 'setor-' + id).classList.add('active');
+        // Lógica do Dropdown (Faz os setores aparecerem)
+        window.mudarSetor = () => {
+            const valor = document.getElementById('menu-setor').value;
+            document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+            if(valor) {
+                document.getElementById('setor-' + valor).classList.add('active');
+            }
         };
 
-        window.callT = (tipo, selectId) => {
-            const local = document.getElementById(selectId).value;
+        window.sync = () => {
+            const vals = {
+                normal: parseInt(document.getElementById('syncN').value) || 0,
+                pref: parseInt(document.getElementById('syncP').value) || 0,
+                coleta: parseInt(document.getElementById('syncC').value) || 0,
+                odonto: parseInt(document.getElementById('syncO').value) || 0
+            };
+            set(ref(db, 'contadores'), vals);
+            alert("Senhas Sincronizadas!");
+        };
+
+        window.callT = (tipo, localInput) => {
+            const local = document.getElementById(localInput) ? document.getElementById(localInput).value : localInput;
             const p = ref(db, 'contadores/' + tipo.toLowerCase());
             runTransaction(p, (c) => (c || 0) + 1).then(r => {
-                const n = String(r.snapshot.val()).padStart(3, '0');
-                const nome = tipo + " " + n;
-                push(ref(db, 'fila'), { nome, local, tipo: 'senha', time: new Date().toLocaleTimeString() });
+                const num = String(r.snapshot.val()).padStart(3, '0');
+                // Salva o tipo real no banco para a TV saber como falar
+                push(ref(db, 'fila'), { 
+                    nome: num, 
+                    local: local, 
+                    tipo: tipo === 'PREF' ? 'senha_pref' : 'senha_normal', 
+                    time: new Date().toLocaleTimeString() 
+                });
             });
         };
 
-        // FUNÇÃO DE RESET COM SENHA
-        window.resetSistema = () => {
-            const senha = prompt("Digite a senha de segurança para ZERAR as senhas:");
-            if (senha === "usfcohab") {
-                if (confirm("Isso voltará todas as senhas para 001. Confirma?")) {
-                    set(ref(db, 'contadores'), { normal: 0, pref: 0, coleta: 0, odonto: 0 });
-                    remove(ref(db, 'fila'));
-                    alert("Sistema reiniciado com sucesso!");
-                }
-            } else {
-                alert("Senha incorreta! Operação cancelada.");
+        window.callN = (inp, sel) => {
+            const nome = document.getElementById(inp).value.toUpperCase();
+            const local = document.getElementById(sel).value;
+            if(!nome) return alert("Digite o nome!");
+            push(ref(db, 'fila'), { nome, local, tipo: 'paciente', time: new Date().toLocaleTimeString() });
+            document.getElementById(inp).value = "";
+        };
+
+        window.addA = () => {
+            const texto = document.getElementById('msg-aviso').value;
+            if(texto) {
+                push(ref(db, 'avisos'), { texto });
+                document.getElementById('msg-aviso').value = "";
+                alert("Aviso enviado para a TV!");
             }
+        };
+
+        window.limparAvisos = () => {
+            if(confirm("Apagar todos os informativos da TV?")) remove(ref(db, 'avisos'));
+        };
+
+        window.resetSistema = () => {
+            const senha = prompt("Digite a senha de segurança:");
+            if (senha === "usfcohab") {
+                if (confirm("Zerar as senhas para 001?")) {
+                    set(ref(db, 'contadores'), { normal: 0, pref: 0, coleta: 0, odonto: 0 });
+                    alert("Sistema zerado com sucesso!");
+                }
+            } else { alert("Senha incorreta!"); }
         };
     </script>
 </body>
