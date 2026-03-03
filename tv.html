@@ -72,9 +72,7 @@
 
         window.iniciarSom = () => { 
             document.getElementById('setup-som').style.display='none';
-            const intro = new SpeechSynthesisUtterance("Sistema de chamadas iniciado.");
-            intro.lang = 'pt-BR';
-            window.speechSynthesis.speak(intro);
+            window.speechSynthesis.speak(new SpeechSynthesisUtterance("Sistema iniciado."));
         };
 
         setInterval(() => { document.getElementById('relogio').innerText = new Date().toLocaleTimeString(); }, 1000);
@@ -105,19 +103,28 @@
                 let loc = d.local.toUpperCase();
                 let prep = (loc.includes("TRIAGEM") || loc.includes("RECEPÇÃO") || loc.includes("SALA") || loc.includes("ODONTOLOGIA") || loc.includes("VACINA") || loc.includes("COLETA")) ? "à" : "ao";
                 
-                // --- AJUSTE DE VOZ SOLICITADO ---
-                let tipoChamada = (d.tipo === 'SENHA') ? "Atenção, senha." : "Atenção, paciente.";
-                let frase = `${tipoChamada} ${d.nome}. Dirija-se ${prep} ${d.local}`;
-                // --------------------------------
+                // LÓGICA DE VOZ MELHORADA
+                let frase = "";
+                if (d.tipo === 'SENHA') {
+                    let tipoTexto = "Normal";
+                    if (d.subtipo === 'PREF') tipoTexto = "Preferencial";
+                    if (d.subtipo === 'COLETA') tipoTexto = "de Coleta";
+                    
+                    frase = `Atenção. Senha ${tipoTexto}. Número ${d.nome}. Dirija-se ${prep} ${d.local}`;
+                } else {
+                    frase = `Atenção. Paciente. ${d.nome}. Dirija-se ${prep} ${d.local}`;
+                }
 
                 const v = new SpeechSynthesisUtterance(frase);
                 v.lang = 'pt-BR'; 
-                v.rate = 0.9;
+                v.rate = 0.8; // Um pouco mais devagar para clareza
+                v.pitch = 1.1; // Tom levemente mais agudo para destacar
+                
                 v.onend = () => { 
                     setTimeout(() => { falando = false; if(fila.length > 0) processar(); else rotate(); }, 3000); 
                 };
                 window.speechSynthesis.speak(v);
-            }, 1200);
+            }, 1300);
         }
 
         onValue(ref(db, 'avisos'), (s) => { 
