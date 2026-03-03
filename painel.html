@@ -33,7 +33,7 @@
 
     <label>SELECIONE SEU SETOR</label>
     <select id="main-setor" onchange="showSec()">
-        <option value="">Clique para escolher...</option>
+        <option value="">Escolha...</option>
         <option value="acolhimento">🎫 ACOLHIMENTO (ENTREGA)</option>
         <option value="recepcao">🏢 RECEPÇÃO (CHAMADA)</option>
         <option value="medico">👨‍⚕️ MÉDICOS / CONSULTÓRIOS</option>
@@ -44,13 +44,13 @@
     </select>
 
     <div id="sec-acolhimento" class="section">
-        <label>SINCRIZAR ÚLTIMAS SENHAS</label>
+        <label>ÚLTIMA SENHA ENTREGUE (SINCRO)</label>
         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
-            <div><label>N</label><input type="number" id="in-n" placeholder="0"></div>
-            <div><label>P</label><input type="number" id="in-p" placeholder="0"></div>
-            <div><label>C</label><input type="number" id="in-c" placeholder="0"></div>
+            <div><label>N</label><input type="number" id="in-n"></div>
+            <div><label>P</label><input type="number" id="in-p"></div>
+            <div><label>C</label><input type="number" id="in-c"></div>
         </div>
-        <button class="btn btn-update" onclick="sync()">ATUALIZAR CONTADORES</button>
+        <button class="btn btn-update" onclick="sync()">ATUALIZAR SISTEMA</button>
     </div>
 
     <div id="sec-recepcao" class="section">
@@ -63,19 +63,21 @@
         <button class="btn btn-call" onclick="callS('NORMAL', 'loc-recepcao', 'recepcao')">CHAMAR NORMAL</button>
         <button class="btn btn-call" style="background:var(--pref)" onclick="callS('PREF', 'loc-recepcao', 'recepcao')">CHAMAR PREFERENCIAL</button>
         <button class="btn btn-call" style="background:var(--coleta)" onclick="callS('COLETA', 'loc-recepcao', 'recepcao')">CHAMAR COLETA</button>
-        <div class="history-box" id="h-recepcao"><label>HISTÓRICO RECEPÇÃO</label></div>
+        <div class="history-box" id="h-recepcao"><label>MEU HISTÓRICO</label></div>
     </div>
 
     <div id="sec-medico" class="section">
-        <label>CONSULTÓRIO</label>
-        <select id="loc-medico">
+        <label>SALA</label>
+        <select id="loc-med">
             <option value="CONSULTÓRIO 01">CONSULTÓRIO 01</option>
             <option value="CONSULTÓRIO 02">CONSULTÓRIO 02</option>
+            <option value="CONSULTÓRIO 03">CONSULTÓRIO 03</option>
+            <option value="CONSULTÓRIO 04">CONSULTÓRIO 04</option>
         </select>
         <label>PACIENTE</label>
-        <input type="text" id="nome-med" placeholder="NOME DO PACIENTE">
-        <button class="btn btn-call" onclick="callP('nome-med', 'loc-medico', 'medico')">CHAMAR AGORA</button>
-        <div class="history-box" id="h-medico"><label>MEU HISTÓRICO MÉDICO</label></div>
+        <input type="text" id="nome-med" placeholder="NOME COMPLETO">
+        <button class="btn btn-call" onclick="callP('nome-med', 'loc-med', 'medico')">CHAMAR AGORA</button>
+        <div class="history-box" id="h-medico"><label>MEU HISTÓRICO</label></div>
     </div>
 
     <div id="sec-enfermagem" class="section">
@@ -88,33 +90,30 @@
             <option value="CONSULTÓRIO DE ENFERMAGEM">CONSULTÓRIO DE ENFERMAGEM</option>
         </select>
         <label>PACIENTE</label>
-        <input type="text" id="nome-enf" placeholder="NOME DO PACIENTE">
+        <input type="text" id="nome-enf" placeholder="NOME COMPLETO">
         <button class="btn btn-call" onclick="callP('nome-enf', 'loc-enf', 'enfermagem')">CHAMAR AGORA</button>
-        <div class="history-box" id="h-enfermagem"><label>MEU HISTÓRICO ENFERMAGEM</label></div>
+        <div class="history-box" id="h-enfermagem"><label>MEU HISTÓRICO</label></div>
     </div>
 
     <div id="sec-odonto" class="section">
-        <label>PACIENTE (ODONTO)</label>
         <input type="text" id="nome-odonto" placeholder="NOME DO PACIENTE">
         <button class="btn btn-call" onclick="callP('nome-odonto', 'ODONTOLOGIA', 'odonto')">CHAMAR ODONTO</button>
-        <div class="history-box" id="h-odonto"><label>HISTÓRICO ODONTO</label></div>
+        <div class="history-box" id="h-odonto"></div>
     </div>
-
     <div id="sec-social" class="section">
-        <label>PACIENTE (SOCIAL)</label>
         <input type="text" id="nome-social" placeholder="NOME DO PACIENTE">
         <button class="btn btn-call" onclick="callP('nome-social', 'ASSISTENTE SOCIAL', 'social')">CHAMAR SOCIAL</button>
-        <div class="history-box" id="h-social"><label>HISTÓRICO SOCIAL</label></div>
+        <div class="history-box" id="h-social"></div>
     </div>
 
     <div id="sec-gerencia" class="section">
-        <label>COR DOS AVISOS</label>
+        <label>COR DO AVISO</label>
         <input type="color" id="cor-tv" onchange="upColor()" value="#2ecc71">
-        <label>NOVO AVISO</label>
-        <textarea id="msg" placeholder="TEXTO PARA A TV..."></textarea>
+        <label>AVISO TV</label>
+        <textarea id="msg" placeholder="TEXTO..."></textarea>
         <button class="btn btn-update" onclick="addA()">PUBLICAR</button>
         <div id="l-avisos"></div>
-        <button class="btn btn-danger" onclick="resetSenhas()">🚫 ZERAR SENHAS DO DIA</button>
+        <button class="btn btn-danger" onclick="resetSenhas()">🚫 ZERAR SENHAS (REQUER SENHA)</button>
     </div>
 </div>
 
@@ -131,17 +130,24 @@
         if(v) document.getElementById('sec-' + v).classList.add('active');
     };
 
+    // Sincroniza Acolhimento com o caminho correto que a Recepção lê
     window.sync = () => {
         set(ref(db, 'senhas_chamadas'), {
             NORMAL: parseInt(document.getElementById('in-n').value) || 0,
             PREF: parseInt(document.getElementById('in-p').value) || 0,
             COLETA: parseInt(document.getElementById('in-c').value) || 0
-        });
-        alert("Sincronizado!");
+        }).then(() => alert("Sincronizado com a Recepção!"));
     };
 
+    // Reset com senha de segurança
     window.resetSenhas = () => {
-        if(confirm("Zerar senhas?")) set(ref(db, 'senhas_chamadas'), { NORMAL: 0, PREF: 0, COLETA: 0 });
+        const pw = prompt("Digite a senha de gerente para ZERAR:");
+        if(pw === "1234") {
+            set(ref(db, 'senhas_chamadas'), { NORMAL: 0, PREF: 0, COLETA: 0 });
+            alert("Senhas zeradas!");
+        } else {
+            alert("Senha incorreta!");
+        }
     };
 
     window.callS = (sub, locId, hId) => {
@@ -165,10 +171,11 @@
 
     function addH(s, d) {
         const c = document.getElementById('h-' + s);
+        if(!c) return;
         const div = document.createElement('div');
         div.className = 'hist-item';
         div.innerHTML = `<span>${d.nome}</span><button class="btn-re" onclick="window.reChamar('${d.nome}','${d.local}','${d.tipo}','${d.subtipo||''}')">RECHAMAR</button>`;
-        c.insertBefore(div, c.childNodes[1]);
+        c.insertBefore(div, c.childNodes[1] || null);
         if(c.children.length > 6) c.removeChild(c.lastChild);
     }
 
@@ -183,8 +190,7 @@
     };
 
     onValue(ref(db, 'avisos'), (s) => {
-        const l = document.getElementById('l-avisos');
-        l.innerHTML = "";
+        const l = document.getElementById('l-avisos'); l.innerHTML = "";
         s.forEach(c => {
             const d = document.createElement('div');
             d.style = "background:white; padding:10px; margin-top:5px; border-radius:10px; display:flex; justify-content:space-between; font-size:0.8rem; border-left: 5px solid var(--primary);";
@@ -198,4 +204,3 @@
 </script>
 </body>
 </html>
-
