@@ -24,6 +24,11 @@
         .btn-sync { background: #28a745; }
         .btn-danger { background: #dc3545; font-size: 0.7rem; margin-top: 25px; opacity: 0.8; }
         
+        /* Estilo do Espelho de Senhas */
+        .mirror-box { background: #e9ecef; padding: 15px; border-radius: 10px; margin-bottom: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center; border: 1px solid #ced4da; }
+        .mirror-val { font-size: 1.5rem; font-weight: 900; color: var(--primary); display: block; }
+        .mirror-label { font-size: 0.7rem; color: #666; font-weight: bold; }
+
         .grid-sync { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     </style>
 </head>
@@ -60,6 +65,18 @@
         </div>
 
         <div id="setor-recepcao" class="step">
+            <label>ESPELHO DO ACOLHIMENTO (ÚLTIMAS ENTREGUES)</label>
+            <div class="mirror-box">
+                <div>
+                    <span class="mirror-label">NORMAL</span>
+                    <span class="mirror-val" id="mirror-n">000</span>
+                </div>
+                <div>
+                    <span class="mirror-label">PREF.</span>
+                    <span class="mirror-val" id="mirror-p" style="color:#f0ad4e">000</span>
+                </div>
+            </div>
+
             <label>SELECIONE SEU GUICHÊ</label>
             <select id="guiche-rep">
                 <option value="RECEPÇÃO 01">RECEPÇÃO 01</option>
@@ -113,7 +130,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, push, runTransaction, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, set, push, runTransaction, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA5tayYNLD_P_ZnlWhst81Dkuz8gDv7vPU",
@@ -127,6 +144,15 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+
+        // ESCUTA OS CONTADORES PARA O ESPELHO DA RECEPÇÃO
+        onValue(ref(db, 'contadores'), (snapshot) => {
+            const data = snapshot.val();
+            if(data) {
+                document.getElementById('mirror-n').innerText = String(data.normal || 0).padStart(3, '0');
+                document.getElementById('mirror-p').innerText = String(data.pref || 0).padStart(3, '0');
+            }
+        });
 
         window.mudarSetor = () => {
             const val = document.getElementById('menu-setor').value;
@@ -145,11 +171,7 @@
             const p = ref(db, 'contadores/' + tipo.toLowerCase());
             runTransaction(p, (c) => (c || 0) + 1).then(r => {
                 const num = String(r.snapshot.val()).padStart(3, '0');
-                push(ref(db, 'fila'), { 
-                    nome: num, 
-                    local: local, 
-                    tipo: tipo === 'PREF' ? 'senha_pref' : 'senha_normal' 
-                });
+                push(ref(db, 'fila'), { nome: num, local: local, tipo: tipo === 'PREF' ? 'senha_pref' : 'senha_normal' });
             });
         };
 
