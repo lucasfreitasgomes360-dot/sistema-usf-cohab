@@ -16,8 +16,10 @@
         .btn { width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; text-transform: uppercase; cursor: pointer; color: white; margin-top: 10px; transition: 0.2s; }
         .btn-call { background: var(--primary); }
         .btn-update { background: var(--accent); }
+        .btn-danger { background: var(--red); margin-top: 20px; }
         .section { display: none; animation: slideIn 0.3s ease-out; }
         .section.active { display: block; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .monitor-acolhimento { background: #eef2f7; padding: 15px; border-radius: 15px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; text-align: center; margin-bottom: 15px; border: 2px solid var(--primary); }
         .monitor-val { font-size: 1.5rem; font-weight: 900; color: var(--primary); }
         .monitor-label { font-size: 0.6rem; font-weight: 800; color: #778ca3; }
@@ -33,12 +35,14 @@
 
     <label>SELECIONE SEU SETOR</label>
     <select id="main-setor" onchange="showSec()">
-        <option value="">Escolha...</option>
+        <option value="">Escolha seu setor...</option>
         <option value="acolhimento">🎫 ACOLHIMENTO (ENTREGA)</option>
         <option value="recepcao">🏢 RECEPÇÃO (CHAMADA)</option>
         <option value="medico">👨‍⚕️ MÉDICOS / CONSULTÓRIOS</option>
         <option value="enfermagem">👩‍⚕️ ENFERMAGEM / SALAS</option>
-        <option value="gerencia">⚙️ GERÊNCIA</option>
+        <option value="odonto">🦷 ODONTOLOGIA</option>
+        <option value="social">🤝 ASSISTENTE SOCIAL</option>
+        <option value="gerencia">⚙️ GERÊNCIA / CONFIGS</option>
     </select>
 
     <div id="sec-acolhimento" class="section">
@@ -52,14 +56,13 @@
     </div>
 
     <div id="sec-recepcao" class="section">
-        <label>ÚLTIMAS ENTREGUES PELO ACOLHIMENTO</label>
+        <label>DISPONÍVEL NO ACOLHIMENTO</label>
         <div class="monitor-acolhimento">
             <div><div class="monitor-label">NORM</div><div id="mon-n" class="monitor-val">0</div></div>
             <div><div class="monitor-label">PREF</div><div id="mon-p" class="monitor-val">0</div></div>
             <div><div class="monitor-label">COLT</div><div id="mon-c" class="monitor-val">0</div></div>
         </div>
-
-        <label>SALA/LOCAL</label>
+        <label>LOCAL</label>
         <select id="loc-recepcao">
             <option value="RECEPÇÃO 01">RECEPÇÃO 01</option>
             <option value="RECEPÇÃO 02">RECEPÇÃO 02</option>
@@ -73,24 +76,51 @@
 
     <div id="sec-medico" class="section">
         <label>CONSULTÓRIO</label>
-        <select id="loc-med"><option value="CONSULTÓRIO 01">CONSULTÓRIO 01</option><option value="CONSULTÓRIO 02">CONSULTÓRIO 02</option><option value="CONSULTÓRIO 03">CONSULTÓRIO 03</option><option value="CONSULTÓRIO 04">CONSULTÓRIO 04</option></select>
-        <label>NOME DO PACIENTE</label>
-        <input type="text" id="nome-med" placeholder="DIGITE O NOME">
+        <select id="loc-med">
+            <option value="CONSULTÓRIO 01">CONSULTÓRIO 01</option>
+            <option value="CONSULTÓRIO 02">CONSULTÓRIO 02</option>
+        </select>
+        <input type="text" id="nome-med" placeholder="NOME DO PACIENTE">
         <button class="btn btn-call" onclick="callP('nome-med', 'loc-med', 'medico')">CHAMAR AGORA</button>
-        <div class="history-box" id="h-medico"></div>
+        <div class="history-box" id="h-medico"><label>MEU HISTÓRICO</label></div>
     </div>
 
     <div id="sec-enfermagem" class="section">
         <label>SALA</label>
-        <select id="loc-enf"><option value="TRIAGEM">TRIAGEM</option><option value="COLETA">COLETA</option><option value="SALA DE VACINA">SALA DE VACINA</option><option value="CURATIVO">CURATIVO</option><option value="CONSULTÓRIO DE ENFERMAGEM">CONSULTÓRIO DE ENFERMAGEM</option></select>
-        <label>NOME DO PACIENTE</label>
-        <input type="text" id="nome-enf" placeholder="DIGITE O NOME">
+        <select id="loc-enf">
+            <option value="TRIAGEM">TRIAGEM</option>
+            <option value="COLETA">COLETA</option>
+            <option value="SALA DE VACINA">SALA DE VACINA</option>
+            <option value="CURATIVO">CURATIVO</option>
+            <option value="CONSULTÓRIO DE ENFERMAGEM">CONSULTÓRIO DE ENFERMAGEM</option>
+        </select>
+        <input type="text" id="nome-enf" placeholder="NOME DO PACIENTE">
         <button class="btn btn-call" onclick="callP('nome-enf', 'loc-enf', 'enfermagem')">CHAMAR AGORA</button>
-        <div class="history-box" id="h-enfermagem"></div>
+        <div class="history-box" id="h-enfermagem"><label>MEU HISTÓRICO</label></div>
+    </div>
+
+    <div id="sec-odonto" class="section">
+        <label>PACIENTE ODONTO</label>
+        <input type="text" id="nome-odonto" placeholder="NOME">
+        <button class="btn btn-call" onclick="callP('nome-odonto', 'ODONTOLOGIA', 'odonto')">CHAMAR</button>
+        <div class="history-box" id="h-odonto"></div>
+    </div>
+
+    <div id="sec-social" class="section">
+        <label>PACIENTE SOCIAL</label>
+        <input type="text" id="nome-social" placeholder="NOME">
+        <button class="btn btn-call" onclick="callP('nome-social', 'ASSISTENTE SOCIAL', 'social')">CHAMAR</button>
+        <div class="history-box" id="h-social"></div>
     </div>
 
     <div id="sec-gerencia" class="section">
-        <button class="btn" style="background:var(--red)" onclick="resetSenhas()">🚫 ZERAR SENHAS (SENHA: 1234)</button>
+        <label>COR DA BARRA DE AVISO</label>
+        <input type="color" id="cor-tv" onchange="upColor()" value="#2ecc71">
+        <label>NOVO AVISO PARA TV</label>
+        <textarea id="msg" placeholder="DIGITE O AVISO..."></textarea>
+        <button class="btn btn-update" onclick="addA()">PUBLICAR NA TV</button>
+        <div id="l-avisos"></div>
+        <button class="btn btn-danger" onclick="resetSenhas()">🚫 ZERAR TUDO (SENHA 1234)</button>
     </div>
 </div>
 
@@ -107,28 +137,21 @@
         if(v) document.getElementById('sec-' + v).classList.add('active');
     };
 
-    // ACOLHIMENTO ATUALIZA O MONITOR
     window.updateAcolhimento = () => {
         set(ref(db, 'acolhimento_entregue'), {
             NORMAL: parseInt(document.getElementById('in-acolh-n').value) || 0,
             PREF: parseInt(document.getElementById('in-acolh-p').value) || 0,
             COLETA: parseInt(document.getElementById('in-acolh-c').value) || 0
-        }).then(() => alert("Monitor da Recepção Atualizado!"));
+        }).then(() => alert("Monitor atualizado!"));
     };
 
-    // MONITOR EM TEMPO REAL NA RECEPÇÃO
     onValue(ref(db, 'acolhimento_entregue'), (s) => {
         const d = s.val() || { NORMAL:0, PREF:0, COLETA:0 };
         document.getElementById('mon-n').innerText = d.NORMAL;
         document.getElementById('mon-p').innerText = d.PREF;
         document.getElementById('mon-c').innerText = d.COLETA;
-        // Preenche os campos do acolhimento também para não ficarem vazios
-        document.getElementById('in-acolh-n').value = d.NORMAL;
-        document.getElementById('in-acolh-p').value = d.PREF;
-        document.getElementById('in-acolh-c').value = d.COLETA;
     });
 
-    // CHAMADAS POR SENHA (RECEPÇÃO)
     window.callS = (sub, locId, hId) => {
         const local = document.getElementById(locId).value;
         runTransaction(ref(db, 'senhas_chamadas/' + sub), (c) => (c || 0) + 1).then(r => {
@@ -138,7 +161,6 @@
         });
     };
 
-    // CHAMADAS POR NOME
     window.callP = (inpId, locId, hId) => {
         const nome = document.getElementById(inpId).value.toUpperCase();
         const local = document.getElementById(locId).value || locId;
@@ -155,7 +177,7 @@
         const div = document.createElement('div');
         div.className = 'hist-item';
         div.innerHTML = `<span>${d.nome}</span><button class="btn-re" onclick="window.reChamar('${d.nome}','${d.local}','${d.tipo}','${d.subtipo||''}')">RECHAMAR</button>`;
-        c.insertBefore(div, c.childNodes[0] || null);
+        c.insertBefore(div, c.childNodes[1] || null);
         if(c.children.length > 6) c.removeChild(c.lastChild);
     }
 
@@ -163,11 +185,30 @@
         push(ref(db, 'fila'), { nome, local, tipo, subtipo, timestamp: Date.now() });
     };
 
+    window.addA = () => {
+        const t = document.getElementById('msg').value;
+        if(t) push(ref(db, 'avisos'), { texto: t });
+        document.getElementById('msg').value = "";
+    };
+
+    onValue(ref(db, 'avisos'), (s) => {
+        const l = document.getElementById('l-avisos'); l.innerHTML = "";
+        s.forEach(c => {
+            const d = document.createElement('div');
+            d.style = "background:white; padding:10px; margin-top:5px; border-radius:10px; display:flex; justify-content:space-between; font-size:0.8rem; border-left: 5px solid var(--primary);";
+            d.innerHTML = `<span>${c.val().texto}</span><button onclick="window.delA('${c.key}')" style="color:red; border:none; background:none; cursor:pointer; font-weight:bold;">X</button>`;
+            l.appendChild(d);
+        });
+    });
+
+    window.delA = (k) => remove(ref(db, 'avisos/'+k));
+    window.upColor = () => set(ref(db, 'config/corAviso'), document.getElementById('cor-tv').value);
+
     window.resetSenhas = () => {
-        if(prompt("Senha de Segurança:") === "1234") {
+        if(prompt("Digite a senha:") === "1234") {
             set(ref(db, 'senhas_chamadas'), { NORMAL: 0, PREF: 0, COLETA: 0 });
             set(ref(db, 'acolhimento_entregue'), { NORMAL: 0, PREF: 0, COLETA: 0 });
-            alert("Sistema Zerado!");
+            alert("Sistema zerado!");
         }
     };
 </script>
