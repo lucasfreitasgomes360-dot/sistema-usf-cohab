@@ -6,7 +6,7 @@
     <title>PAINEL USF COHAB</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #002b5c; --accent: #2ecc71; --pref: #e67e22; --coleta: #8e44ad; --bg: #f4f7fa; }
+        :root { --primary: #002b5c; --accent: #2ecc71; --pref: #e67e22; --coleta: #8e44ad; --bg: #f4f7fa; --red: #d9534f; }
         body { font-family: 'Montserrat', sans-serif; background: var(--bg); margin: 0; padding: 15px; display: flex; justify-content: center; }
         .app-container { background: white; width: 100%; max-width: 480px; border-radius: 30px; padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
         .brand { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
@@ -16,6 +16,7 @@
         .btn { width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; text-transform: uppercase; cursor: pointer; color: white; margin-top: 10px; transition: 0.2s; }
         .btn-call { background: var(--primary); box-shadow: 0 4px 12px rgba(0,43,92,0.2); }
         .btn-update { background: var(--accent); }
+        .btn-danger { background: var(--red); margin-top: 20px; }
         .btn:active { transform: scale(0.98); }
         .section { display: none; animation: slideIn 0.3s ease-out; }
         .section.active { display: block; }
@@ -28,7 +29,7 @@
 <body>
 
 <div class="app-container">
-    <div class="brand"><h1>USF COHAB</h1><p style="color:#d9534f; font-weight:bold; font-size:0.7rem; margin:0;">DR. JOÃO PEREIRA DA ROSA</p></div>
+    <div class="brand"><h1>USF COHAB</h1><p style="color:var(--red); font-weight:bold; font-size:0.7rem; margin:0;">DR. JOÃO PEREIRA DA ROSA</p></div>
 
     <label>SELECIONE SEU SETOR</label>
     <select id="main-setor" onchange="showSec()">
@@ -36,33 +37,33 @@
         <option value="acolhimento">🎫 ACOLHIMENTO (ENTREGA)</option>
         <option value="recepcao">🏢 RECEPÇÃO (CHAMADA)</option>
         <option value="medico">👨‍⚕️ MÉDICOS / CONSULTÓRIOS</option>
-        <option value="enfermagem">👩‍⚕️ ENFERMAGEM / TRIAGEM</option>
+        <option value="enfermagem">👩‍⚕️ ENFERMAGEM / SALAS</option>
         <option value="odonto">🦷 ODONTOLOGIA</option>
         <option value="social">🤝 ASSISTENTE SOCIAL</option>
-        <option value="gerencia">⚙️ GERÊNCIA / AVISOS TV</option>
+        <option value="gerencia">⚙️ GERÊNCIA / CONFIGURAÇÕES</option>
     </select>
 
     <div id="sec-acolhimento" class="section">
-        <label>ÚLTIMAS ENTREGUES AOS PACIENTES</label>
+        <label>SINCRIZAR ÚLTIMAS SENHAS</label>
         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
-            <input type="number" id="in-n" placeholder="Normal">
-            <input type="number" id="in-p" placeholder="Pref">
-            <input type="number" id="in-c" placeholder="Coleta">
+            <div><label>N</label><input type="number" id="in-n" placeholder="0"></div>
+            <div><label>P</label><input type="number" id="in-p" placeholder="0"></div>
+            <div><label>C</label><input type="number" id="in-c" placeholder="0"></div>
         </div>
         <button class="btn btn-update" onclick="sync()">ATUALIZAR CONTADORES</button>
     </div>
 
     <div id="sec-recepcao" class="section">
-        <label>LOCAL DE CHAMADA</label>
+        <label>LOCAL</label>
         <select id="loc-recepcao">
             <option value="RECEPÇÃO 01">RECEPÇÃO 01</option>
             <option value="RECEPÇÃO 02">RECEPÇÃO 02</option>
             <option value="RECEPÇÃO 03">RECEPÇÃO 03</option>
         </select>
-        <button class="btn btn-call" onclick="callS('NORMAL', 'loc-recepcao')">CHAMAR NORMAL</button>
-        <button class="btn btn-call" style="background:var(--pref)" onclick="callS('PREF', 'loc-recepcao')">CHAMAR PREFERENCIAL</button>
-        <button class="btn btn-call" style="background:var(--coleta)" onclick="callS('COLETA', 'loc-recepcao')">CHAMAR COLETA</button>
-        <div class="history-box" id="h-recepcao"><label>MEU HISTÓRICO</label></div>
+        <button class="btn btn-call" onclick="callS('NORMAL', 'loc-recepcao', 'recepcao')">CHAMAR NORMAL</button>
+        <button class="btn btn-call" style="background:var(--pref)" onclick="callS('PREF', 'loc-recepcao', 'recepcao')">CHAMAR PREFERENCIAL</button>
+        <button class="btn btn-call" style="background:var(--coleta)" onclick="callS('COLETA', 'loc-recepcao', 'recepcao')">CHAMAR COLETA</button>
+        <div class="history-box" id="h-recepcao"><label>HISTÓRICO RECEPÇÃO</label></div>
     </div>
 
     <div id="sec-medico" class="section">
@@ -71,44 +72,51 @@
             <option value="CONSULTÓRIO 01">CONSULTÓRIO 01</option>
             <option value="CONSULTÓRIO 02">CONSULTÓRIO 02</option>
             <option value="CONSULTÓRIO 03">CONSULTÓRIO 03</option>
+            <option value="CONSULTÓRIO 04">CONSULTÓRIO 04</option>
         </select>
-        <label>NOME DO PACIENTE</label>
-        <input type="text" id="nome-med" placeholder="Digite o nome completo">
-        <button class="btn btn-call" onclick="callP('nome-med', 'loc-medico', 'medico')">CHAMAR PACIENTE</button>
-        <div class="history-box" id="h-medico"><label>MEU HISTÓRICO</label></div>
+        <label>PACIENTE</label>
+        <input type="text" id="nome-med" placeholder="NOME DO PACIENTE">
+        <button class="btn btn-call" onclick="callP('nome-med', 'loc-medico', 'medico')">CHAMAR AGORA</button>
+        <div class="history-box" id="h-medico"><label>MEU HISTÓRICO MÉDICO</label></div>
     </div>
 
     <div id="sec-enfermagem" class="section">
-        <label>SALA / ATENDIMENTO</label>
+        <label>SALA</label>
         <select id="loc-enf">
             <option value="TRIAGEM">TRIAGEM</option>
+            <option value="COLETA">COLETA</option>
             <option value="SALA DE VACINA">SALA DE VACINA</option>
-            <option value="SALA DE CURATIVOS">SALA DE CURATIVOS</option>
+            <option value="CURATIVO">CURATIVO</option>
+            <option value="CONSULTÓRIO DE ENFERMAGEM">CONSULTÓRIO DE ENFERMAGEM</option>
         </select>
-        <label>NOME DO PACIENTE</label>
-        <input type="text" id="nome-enf" placeholder="Nome completo">
-        <button class="btn btn-call" onclick="callP('nome-enf', 'loc-enf', 'enfermagem')">CHAMAR PACIENTE</button>
-        <div class="history-box" id="h-enfermagem"><label>MEU HISTÓRICO</label></div>
+        <label>PACIENTE</label>
+        <input type="text" id="nome-enf" placeholder="NOME DO PACIENTE">
+        <button class="btn btn-call" onclick="callP('nome-enf', 'loc-enf', 'enfermagem')">CHAMAR AGORA</button>
+        <div class="history-box" id="h-enfermagem"><label>MEU HISTÓRICO ENFERMAGEM</label></div>
     </div>
 
     <div id="sec-odonto" class="section">
-        <label>NOME DO PACIENTE (ODONTOLOGIA)</label>
-        <input type="text" id="nome-odonto" placeholder="Nome completo">
-        <button class="btn btn-call" onclick="callP('nome-odonto', 'ODONTOLOGIA', 'odonto')">CHAMAR PACIENTE</button>
+        <label>PACIENTE (ODONTO)</label>
+        <input type="text" id="nome-odonto" placeholder="NOME DO PACIENTE">
+        <button class="btn btn-call" onclick="callP('nome-odonto', 'ODONTOLOGIA', 'odonto')">CHAMAR ODONTO</button>
+        <div class="history-box" id="h-odonto"><label>HISTÓRICO ODONTO</label></div>
     </div>
+
     <div id="sec-social" class="section">
-        <label>NOME DO PACIENTE (ASSISTENTE SOCIAL)</label>
-        <input type="text" id="nome-social" placeholder="Nome completo">
-        <button class="btn btn-call" onclick="callP('nome-social', 'ASSISTENTE SOCIAL', 'social')">CHAMAR PACIENTE</button>
+        <label>PACIENTE (SOCIAL)</label>
+        <input type="text" id="nome-social" placeholder="NOME DO PACIENTE">
+        <button class="btn btn-call" onclick="callP('nome-social', 'ASSISTENTE SOCIAL', 'social')">CHAMAR SOCIAL</button>
+        <div class="history-box" id="h-social"><label>HISTÓRICO SOCIAL</label></div>
     </div>
 
     <div id="sec-gerencia" class="section">
-        <label>COR DO CARD DE AVISOS</label>
-        <input type="color" id="cor-tv" onchange="upColor()" value="#2ecc71" style="height:50px; cursor:pointer">
-        <label>NOVO INFORMATIVO</label>
-        <textarea id="msg" placeholder="Aviso da TV..."></textarea>
-        <button class="btn btn-update" onclick="addA()">PUBLICAR NA TV</button>
+        <label>COR DOS AVISOS</label>
+        <input type="color" id="cor-tv" onchange="upColor()" value="#2ecc71">
+        <label>NOVO AVISO</label>
+        <textarea id="msg" placeholder="TEXTO PARA A TV..."></textarea>
+        <button class="btn btn-update" onclick="addA()">PUBLICAR</button>
         <div id="l-avisos"></div>
+        <button class="btn btn-danger" onclick="resetSenhas()">🚫 ZERAR SENHAS DO DIA</button>
     </div>
 </div>
 
@@ -126,20 +134,24 @@
     };
 
     window.sync = () => {
-        set(ref(db, 'contadores'), {
-            normal: parseInt(document.getElementById('in-n').value) || 0,
-            pref: parseInt(document.getElementById('in-p').value) || 0,
-            coleta: parseInt(document.getElementById('in-c').value) || 0
+        set(ref(db, 'senhas_chamadas'), {
+            NORMAL: parseInt(document.getElementById('in-n').value) || 0,
+            PREF: parseInt(document.getElementById('in-p').value) || 0,
+            COLETA: parseInt(document.getElementById('in-c').value) || 0
         });
         alert("Sincronizado!");
     };
 
-    window.callS = (sub, locId) => {
+    window.resetSenhas = () => {
+        if(confirm("Zerar senhas?")) set(ref(db, 'senhas_chamadas'), { NORMAL: 0, PREF: 0, COLETA: 0 });
+    };
+
+    window.callS = (sub, locId, hId) => {
         const local = document.getElementById(locId).value;
         runTransaction(ref(db, 'senhas_chamadas/' + sub), (c) => (c || 0) + 1).then(r => {
             const d = { nome: r.snapshot.val(), local, tipo: 'SENHA', subtipo: sub, timestamp: Date.now() };
             push(ref(db, 'fila'), d);
-            addH('recepcao', d);
+            addH(hId, d);
         });
     };
 
@@ -149,18 +161,17 @@
         if(!nome) return;
         const d = { nome, local, tipo: 'PACIENTE', timestamp: Date.now() };
         push(ref(db, 'fila'), d);
-        if(hId !== 'odonto' && hId !== 'social') addH(hId, d);
+        addH(hId, d);
         document.getElementById(inpId).value = "";
     };
 
     function addH(s, d) {
         const c = document.getElementById('h-' + s);
-        if(!c) return;
         const div = document.createElement('div');
         div.className = 'hist-item';
-        div.innerHTML = `<span>${d.nome}</span><button class="btn-re" onclick="reChamar('${d.nome}','${d.local}','${d.tipo}','${d.subtipo||''}')">RECHAMAR</button>`;
+        div.innerHTML = `<span>${d.nome}</span><button class="btn-re" onclick="window.reChamar('${d.nome}','${d.local}','${d.tipo}','${d.subtipo||''}')">RECHAMAR</button>`;
         c.insertBefore(div, c.childNodes[1]);
-        if(c.children.length > 4) c.removeChild(c.lastChild);
+        if(c.children.length > 6) c.removeChild(c.lastChild);
     }
 
     window.reChamar = (nome, local, tipo, subtipo) => {
