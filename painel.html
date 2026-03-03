@@ -42,6 +42,7 @@
         <option value="social">🤝 ASSISTENTE SOCIAL</option>
         <option value="gerencia">⚙️ GERÊNCIA / CONFIGS</option>
     </select>
+
     <div id="sec-acolhimento" class="section">
         <label>ÚLTIMA SENHA ENTREGUE</label>
         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
@@ -51,6 +52,7 @@
         </div>
         <button class="btn btn-update" onclick="updateAcolhimento()">ATUALIZAR MONITOR</button>
     </div>
+
     <div id="sec-recepcao" class="section">
         <div class="monitor-acolhimento">
             <div><div class="monitor-label">NORM</div><div id="mon-n" class="monitor-val">00</div></div>
@@ -64,6 +66,7 @@
         <button class="btn btn-call" style="background:var(--coleta)" onclick="callS('COLETA', 'loc-recepcao', 'recepcao')">CHAMAR COLETA</button>
         <div class="history-box" id="h-recepcao"><label>MEU HISTÓRICO</label></div>
     </div>
+
     <div id="sec-medico" class="section">
         <label>CONSULTÓRIO</label>
         <select id="loc-med"><option value="CONSULTÓRIO 01">CONSULTÓRIO 01</option><option value="CONSULTÓRIO 02">CONSULTÓRIO 02</option><option value="CONSULTÓRIO 03">CONSULTÓRIO 03</option><option value="CONSULTÓRIO 04">CONSULTÓRIO 04</option></select>
@@ -71,6 +74,7 @@
         <button class="btn btn-call" onclick="callP('nome-med', 'loc-med', 'medico')">CHAMAR AGORA</button>
         <div class="history-box" id="h-medico"><label>MEU HISTÓRICO</label></div>
     </div>
+
     <div id="sec-enfermagem" class="section">
         <label>SALA</label>
         <select id="loc-enf"><option value="TRIAGEM">TRIAGEM</option><option value="COLETA">COLETA</option><option value="SALA DE VACINA">SALA DE VACINA</option><option value="CURATIVO">CURATIVO</option><option value="CONSULTÓRIO DE ENFERMAGEM">CONSULTÓRIO DE ENFERMAGEM</option></select>
@@ -78,8 +82,10 @@
         <button class="btn btn-call" onclick="callP('nome-enf', 'loc-enf', 'enfermagem')">CHAMAR AGORA</button>
         <div class="history-box" id="h-enfermagem"><label>MEU HISTÓRICO</label></div>
     </div>
+
     <div id="sec-odonto" class="section"><label>PACIENTE ODONTO</label><input type="text" id="nome-odonto" placeholder="NOME"><button class="btn btn-call" onclick="callP('nome-odonto', 'ODONTOLOGIA', 'odonto')">CHAMAR</button><div class="history-box" id="h-odonto"></div></div>
     <div id="sec-social" class="section"><label>PACIENTE SOCIAL</label><input type="text" id="nome-social" placeholder="NOME"><button class="btn btn-call" onclick="callP('nome-social', 'ASSISTENTE SOCIAL', 'social')">CHAMAR</button><div class="history-box" id="h-social"></div></div>
+    
     <div id="sec-gerencia" class="section">
         <label>COR DA BARRA DE AVISO</label><input type="color" id="cor-tv" onchange="upColor()" value="#2ecc71">
         <label>NOVO AVISO PARA TV</label><textarea id="msg" placeholder="DIGITE O AVISO..."></textarea><button class="btn btn-update" onclick="addA()">PUBLICAR NA TV</button><div id="l-avisos"></div>
