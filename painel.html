@@ -11,29 +11,21 @@
         .header { text-align: center; margin-bottom: 20px; }
         .header h1 { color: var(--primary); margin: 0; font-size: 1.6rem; font-weight: 900; }
         .header h2 { color: var(--red); margin: 0; font-size: 0.9rem; font-weight: bold; }
-        
         label { display: block; font-weight: bold; color: var(--primary); margin: 15px 0 5px; font-size: 0.8rem; text-transform: uppercase; }
         select, input, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
-        
         .step { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; }
-        .step.active { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
+        .step.active { display: block; }
         .btn-call { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
         .btn-pref { background: #f0ad4e; }
         .btn-sync { background: #28a745; }
         .btn-danger { background: #dc3545; font-size: 0.7rem; margin-top: 25px; opacity: 0.8; }
-        
-        /* Estilo do Espelho de Senhas */
         .mirror-box { background: #e9ecef; padding: 15px; border-radius: 10px; margin-bottom: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center; border: 1px solid #ced4da; }
         .mirror-val { font-size: 1.5rem; font-weight: 900; color: var(--primary); display: block; }
         .mirror-label { font-size: 0.7rem; color: #666; font-weight: bold; }
-
         .grid-sync { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     </style>
 </head>
 <body>
-
     <div class="card">
         <div class="header">
             <h1>USF COHAB</h1> 
@@ -67,16 +59,9 @@
         <div id="setor-recepcao" class="step">
             <label>ESPELHO DO ACOLHIMENTO (ÚLTIMAS ENTREGUES)</label>
             <div class="mirror-box">
-                <div>
-                    <span class="mirror-label">NORMAL</span>
-                    <span class="mirror-val" id="mirror-n">000</span>
-                </div>
-                <div>
-                    <span class="mirror-label">PREF.</span>
-                    <span class="mirror-val" id="mirror-p" style="color:#f0ad4e">000</span>
-                </div>
+                <div><span class="mirror-label">NORMAL</span><span class="mirror-val" id="mirror-n">000</span></div>
+                <div><span class="mirror-label">PREF.</span><span class="mirror-val" id="mirror-p" style="color:#f0ad4e">000</span></div>
             </div>
-
             <label>SELECIONE SEU GUICHÊ</label>
             <select id="guiche-rep">
                 <option value="RECEPÇÃO 01">RECEPÇÃO 01</option>
@@ -101,7 +86,6 @@
             <select id="sala-enf">
                 <option value="TRIAGEM">TRIAGEM</option>
                 <option value="SALA DE VACINA">SALA DE VACINA</option>
-                <option value="SALA DE CURATIVO">SALA DE CURATIVO</option>
             </select>
             <label>NOME DO PACIENTE</label>
             <input type="text" id="nome-enf" placeholder="NOME COMPLETO">
@@ -125,7 +109,6 @@
             <textarea id="msg-aviso" rows="3"></textarea>
             <button class="btn-call" onclick="addA()">PUBLICAR NA TV</button>
         </div>
-
     </div>
 
     <script type="module">
@@ -145,7 +128,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // ESCUTA OS CONTADORES PARA O ESPELHO DA RECEPÇÃO
         onValue(ref(db, 'contadores'), (snapshot) => {
             const data = snapshot.val();
             if(data) {
@@ -163,7 +145,7 @@
         window.sync = () => {
             const vals = { normal: parseInt(document.getElementById('syncN').value) || 0, pref: parseInt(document.getElementById('syncP').value) || 0 };
             set(ref(db, 'contadores'), vals);
-            alert("Senhas sincronizadas!");
+            alert("Sincronizado!");
         };
 
         window.callT = (tipo, localInput) => {
@@ -171,28 +153,33 @@
             const p = ref(db, 'contadores/' + tipo.toLowerCase());
             runTransaction(p, (c) => (c || 0) + 1).then(r => {
                 const num = String(r.snapshot.val()).padStart(3, '0');
-                push(ref(db, 'fila'), { nome: num, local: local, tipo: tipo === 'PREF' ? 'senha_pref' : 'senha_normal' });
+                push(ref(db, 'fila'), { 
+                    nome: num, 
+                    local: local, 
+                    tipo: tipo === 'PREF' ? 'senha_pref' : 'senha_normal',
+                    timestamp: Date.now() 
+                });
             });
         };
 
         window.callN = (inp, sel) => {
             const nome = document.getElementById(inp).value.toUpperCase();
             const local = document.getElementById(sel).value || document.getElementById(sel).innerText || sel;
-            if(!nome) return alert("Por favor, digite o nome!");
-            push(ref(db, 'fila'), { nome, local, tipo: 'paciente' });
+            if(!nome) return alert("Nome vazio!");
+            push(ref(db, 'fila'), { nome, local, tipo: 'paciente', timestamp: Date.now() });
             document.getElementById(inp).value = "";
         };
 
         window.addA = () => {
             const texto = document.getElementById('msg-aviso').value;
-            if(texto) { push(ref(db, 'avisos'), { texto }); alert("Aviso enviado!"); document.getElementById('msg-aviso').value = ""; }
+            if(texto) { push(ref(db, 'avisos'), { texto }); alert("Aviso enviado!"); }
         };
 
         window.resetSistema = () => {
             if (prompt("Senha de segurança (usfcohab):") === "usfcohab") {
                 set(ref(db, 'contadores'), { normal: 0, pref: 0 });
                 remove(ref(db, 'fila'));
-                alert("Sistema zerado!");
+                alert("Resetado!");
             }
         };
     </script>
