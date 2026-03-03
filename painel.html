@@ -23,7 +23,6 @@
         .history-box { margin-top: 20px; background: #f8fafc; border-radius: 15px; padding: 10px; border: 1px dashed #cbd5e0; }
         .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border-radius: 12px; margin-bottom: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.03); font-size: 0.85rem; font-weight: 700; color: var(--primary); }
         .btn-re { background: #eef2f7; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 0.65rem; color: var(--primary); }
-        .btn-re:hover { background: var(--primary); color: white; }
     </style>
 </head>
 <body>
@@ -34,8 +33,8 @@
     <label>SELECIONE SEU SETOR</label>
     <select id="main-setor" onchange="showSec()">
         <option value="">Clique para escolher...</option>
-        <option value="acolhimento">🎫 ACOLHIMENTO (ENTREGA DE SENHAS)</option>
-        <option value="recepcao">🏢 RECEPÇÃO (CHAMADA DE SENHAS)</option>
+        <option value="acolhimento">🎫 ACOLHIMENTO (ENTREGA)</option>
+        <option value="recepcao">🏢 RECEPÇÃO (CHAMADA)</option>
         <option value="medico">👨‍⚕️ MÉDICOS / CONSULTÓRIOS</option>
         <option value="enfermagem">👩‍⚕️ ENFERMAGEM / TRIAGEM</option>
         <option value="odonto">🦷 ODONTOLOGIA</option>
@@ -44,7 +43,7 @@
     </select>
 
     <div id="sec-acolhimento" class="section">
-        <label>ÚLTIMAS SENHAS ENTREGUES (Sincronizar)</label>
+        <label>ÚLTIMAS ENTREGUES AOS PACIENTES</label>
         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
             <input type="number" id="in-n" placeholder="Normal">
             <input type="number" id="in-p" placeholder="Pref">
@@ -54,7 +53,7 @@
     </div>
 
     <div id="sec-recepcao" class="section">
-        <label>ONDE VOCÊ ESTÁ?</label>
+        <label>LOCAL DE CHAMADA</label>
         <select id="loc-recepcao">
             <option value="RECEPÇÃO 01">RECEPÇÃO 01</option>
             <option value="RECEPÇÃO 02">RECEPÇÃO 02</option>
@@ -93,22 +92,22 @@
     </div>
 
     <div id="sec-odonto" class="section">
-        <label>NOME DO PACIENTE (ODONTO)</label>
+        <label>NOME DO PACIENTE (ODONTOLOGIA)</label>
         <input type="text" id="nome-odonto" placeholder="Nome completo">
         <button class="btn btn-call" onclick="callP('nome-odonto', 'ODONTOLOGIA', 'odonto')">CHAMAR PACIENTE</button>
     </div>
     <div id="sec-social" class="section">
-        <label>NOME DO PACIENTE (SOCIAL)</label>
+        <label>NOME DO PACIENTE (ASSISTENTE SOCIAL)</label>
         <input type="text" id="nome-social" placeholder="Nome completo">
         <button class="btn btn-call" onclick="callP('nome-social', 'ASSISTENTE SOCIAL', 'social')">CHAMAR PACIENTE</button>
     </div>
 
     <div id="sec-gerencia" class="section">
-        <label>COR DE FUNDO DA TV</label>
-        <input type="color" id="cor-tv" onchange="upColor()" value="#002b5c" style="height:50px; cursor:pointer">
-        <label>PUBLICAR AVISO NA TV</label>
-        <textarea id="msg" placeholder="Ex: Campanha de vacinação amanhã..."></textarea>
-        <button class="btn btn-update" onclick="addA()">ADICIONAR AVISO</button>
+        <label>COR DO CARD DE AVISOS</label>
+        <input type="color" id="cor-tv" onchange="upColor()" value="#2ecc71" style="height:50px; cursor:pointer">
+        <label>NOVO INFORMATIVO</label>
+        <textarea id="msg" placeholder="Digite o aviso que aparecerá na TV..."></textarea>
+        <button class="btn btn-update" onclick="addA()">PUBLICAR NA TV</button>
         <div id="l-avisos"></div>
     </div>
 </div>
@@ -132,25 +131,33 @@
             pref: parseInt(document.getElementById('in-p').value) || 0,
             coleta: parseInt(document.getElementById('in-c').value) || 0
         });
-        alert("Senhas sincronizadas!");
+        alert("Sincronizado!");
     };
 
+    // Chamada por Senha com identificação de subtipo
     window.callS = (sub, locId) => {
         const local = document.getElementById(locId).value;
         runTransaction(ref(db, 'senhas_chamadas/' + sub), (c) => (c || 0) + 1).then(r => {
-            const d = { nome: r.snapshot.val(), local, tipo: 'SENHA', subtipo: sub, timestamp: Date.now() };
+            const d = { 
+                nome: r.snapshot.val(), 
+                local, 
+                tipo: 'SENHA', 
+                subtipo: sub, 
+                timestamp: Date.now() 
+            };
             push(ref(db, 'fila'), d);
             addH('recepcao', d);
         });
     };
 
+    // Chamada por Nome
     window.callP = (inpId, locId, hId) => {
         const nome = document.getElementById(inpId).value.toUpperCase();
         const local = document.getElementById(locId).value || locId;
         if(!nome) return alert("Digite o nome!");
         const d = { nome, local, tipo: 'PACIENTE', timestamp: Date.now() };
         push(ref(db, 'fila'), d);
-        addH(hId, d);
+        if(hId !== 'odonto' && hId !== 'social') addH(hId, d);
         document.getElementById(inpId).value = "";
     };
 
@@ -179,7 +186,7 @@
         l.innerHTML = "";
         s.forEach(c => {
             const d = document.createElement('div');
-            d.style = "background:white; padding:10px; margin-top:5px; border-radius:10px; display:flex; justify-content:space-between; font-size:0.8rem;";
+            d.style = "background:white; padding:10px; margin-top:5px; border-radius:10px; display:flex; justify-content:space-between; font-size:0.8rem; border-left: 5px solid var(--primary);";
             d.innerHTML = `<span>${c.val().texto}</span><button onclick="window.delA('${c.key}')" style="color:red; border:none; background:none; cursor:pointer; font-weight:bold;">X</button>`;
             l.appendChild(d);
         });
