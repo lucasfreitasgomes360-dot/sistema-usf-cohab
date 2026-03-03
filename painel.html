@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA USF COHAB - OFICIAL</title>
+    <title>PAINEL USF COHAB</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #002b5c; --accent: #2ecc71; --pref: #e67e22; --coleta: #8e44ad; --bg: #f4f7fa; }
@@ -11,22 +11,19 @@
         .app-container { background: white; width: 100%; max-width: 480px; border-radius: 30px; padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
         .brand { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .brand h1 { font-weight: 900; color: var(--primary); margin: 0; font-size: 1.4rem; }
-        
         label { display: block; font-size: 0.7rem; font-weight: 800; color: #778ca3; margin: 15px 0 5px; text-transform: uppercase; }
-        select, input, textarea { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #edf2f7; font-size: 1rem; font-weight: 600; font-family: inherit; box-sizing: border-box; }
-        
+        select, input, textarea { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #edf2f7; font-size: 1rem; font-weight: 600; font-family: inherit; box-sizing: border-box; margin-bottom: 10px; }
         .btn { width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; text-transform: uppercase; cursor: pointer; color: white; margin-top: 10px; transition: 0.2s; }
-        .btn-call { background: var(--primary); }
+        .btn-call { background: var(--primary); box-shadow: 0 4px 12px rgba(0,43,92,0.2); }
         .btn-update { background: var(--accent); }
         .btn:active { transform: scale(0.98); }
-
         .section { display: none; animation: slideIn 0.3s ease-out; }
         .section.active { display: block; }
         @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .history-box { margin-top: 20px; background: #f8fafc; border-radius: 15px; padding: 10px; border: 1px solid #eee; }
-        .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: white; border-radius: 10px; margin-bottom: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 0.8rem; }
-        .btn-re { background: #eee; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: 700; font-size: 0.6rem; }
+        .history-box { margin-top: 20px; background: #f8fafc; border-radius: 15px; padding: 10px; border: 1px dashed #cbd5e0; }
+        .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border-radius: 12px; margin-bottom: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.03); font-size: 0.85rem; font-weight: 700; color: var(--primary); }
+        .btn-re { background: #eef2f7; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 0.65rem; color: var(--primary); }
+        .btn-re:hover { background: var(--primary); color: white; }
     </style>
 </head>
 <body>
@@ -36,76 +33,82 @@
 
     <label>SELECIONE SEU SETOR</label>
     <select id="main-setor" onchange="showSec()">
-        <option value="">Escolher...</option>
-        <option value="acolhimento">🎫 ACOLHIMENTO (ENTREGA)</option>
-        <option value="recepcao">🏢 RECEPÇÃO (SENHAS)</option>
-        <option value="medico">👨‍⚕️ MÉDICOS</option>
+        <option value="">Clique para escolher...</option>
+        <option value="acolhimento">🎫 ACOLHIMENTO (ENTREGA DE SENHAS)</option>
+        <option value="recepcao">🏢 RECEPÇÃO (CHAMADA DE SENHAS)</option>
+        <option value="medico">👨‍⚕️ MÉDICOS / CONSULTÓRIOS</option>
         <option value="enfermagem">👩‍⚕️ ENFERMAGEM / TRIAGEM</option>
         <option value="odonto">🦷 ODONTOLOGIA</option>
         <option value="social">🤝 ASSISTENTE SOCIAL</option>
-        <option value="gerencia">⚙️ GERÊNCIA</option>
+        <option value="gerencia">⚙️ GERÊNCIA / AVISOS TV</option>
     </select>
 
     <div id="sec-acolhimento" class="section">
-        <label>ÚLTIMAS ENTREGUES</label>
-        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:5px;">
+        <label>ÚLTIMAS SENHAS ENTREGUES (Sincronizar)</label>
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
             <input type="number" id="in-n" placeholder="Normal">
             <input type="number" id="in-p" placeholder="Pref">
             <input type="number" id="in-c" placeholder="Coleta">
         </div>
-        <button class="btn btn-update" onclick="sync()">ATUALIZAR ENTREGAS</button>
+        <button class="btn btn-update" onclick="sync()">ATUALIZAR CONTADORES</button>
     </div>
 
     <div id="sec-recepcao" class="section">
-        <label>LOCAL</label>
-        <select id="loc-recepcao"><option value="RECEPÇÃO 01">RECEPÇÃO 01</option><option value="RECEPÇÃO 02">RECEPÇÃO 02</option></select>
-        <button class="btn btn-call" onclick="call('NORMAL', 'loc-recepcao')">CHAMAR NORMAL</button>
-        <button class="btn btn-call" style="background:var(--pref)" onclick="call('PREF', 'loc-recepcao')">CHAMAR PREFERENCIAL</button>
-        <button class="btn btn-call" style="background:var(--coleta)" onclick="call('COLETA', 'loc-recepcao')">CHAMAR COLETA</button>
-        <div class="history-box" id="h-recepcao"><label>ÚLTIMAS CHAMADAS</label></div>
+        <label>ONDE VOCÊ ESTÁ?</label>
+        <select id="loc-recepcao">
+            <option value="RECEPÇÃO 01">RECEPÇÃO 01</option>
+            <option value="RECEPÇÃO 02">RECEPÇÃO 02</option>
+            <option value="RECEPÇÃO 03">RECEPÇÃO 03</option>
+        </select>
+        <button class="btn btn-call" onclick="callS('NORMAL', 'loc-recepcao')">CHAMAR NORMAL</button>
+        <button class="btn btn-call" style="background:var(--pref)" onclick="callS('PREF', 'loc-recepcao')">CHAMAR PREFERENCIAL</button>
+        <button class="btn btn-call" style="background:var(--coleta)" onclick="callS('COLETA', 'loc-recepcao')">CHAMAR COLETA</button>
+        <div class="history-box" id="h-recepcao"><label>MEU HISTÓRICO</label></div>
     </div>
 
     <div id="sec-medico" class="section">
-        <label>CONSULTÓRIO</label>
-        <select id="loc-medico"><option value="CONSULTÓRIO 01">CONSULTÓRIO 01</option><option value="CONSULTÓRIO 02">CONSULTÓRIO 02</option></select>
-        <label>NOME DO(A) PACIENTE</label>
-        <input type="text" id="nome-med" placeholder="Nome completo">
-        <div style="display:flex; gap:10px; margin-top:10px;">
-            <button class="btn btn-call" onclick="callP('nome-med', 'loc-medico', 'F')">CHAMAR ELA ♀</button>
-            <button class="btn btn-call" style="background:#3498db" onclick="callP('nome-med', 'loc-medico', 'M')">CHAMAR ELE ♂</button>
-        </div>
-        <div class="history-box" id="h-medico"><label>ÚLTIMAS CHAMADAS</label></div>
+        <label>ESPECIALIDADE: MÉDICOS</label>
+        <select id="loc-medico">
+            <option value="CONSULTÓRIO 01">CONSULTÓRIO 01</option>
+            <option value="CONSULTÓRIO 02">CONSULTÓRIO 02</option>
+            <option value="CONSULTÓRIO 03">CONSULTÓRIO 03</option>
+        </select>
+        <label>NOME DO PACIENTE</label>
+        <input type="text" id="nome-med" placeholder="Digite o nome completo">
+        <button class="btn btn-call" onclick="callP('nome-med', 'loc-medico', 'medico')">CHAMAR PACIENTE</button>
+        <div class="history-box" id="h-medico"><label>MEU HISTÓRICO</label></div>
     </div>
 
     <div id="sec-enfermagem" class="section">
-        <label>SALA</label>
-        <select id="loc-enf"><option value="TRIAGEM">TRIAGEM</option><option value="SALA DE VACINA">SALA DE VACINA</option><option value="SALA DE CURATIVOS">SALA DE CURATIVOS</option></select>
-        <input type="text" id="nome-enf" placeholder="Nome do(a) paciente">
-        <div style="display:flex; gap:10px; margin-top:10px;">
-            <button class="btn btn-call" onclick="callP('nome-enf', 'loc-enf', 'F')">CHAMAR ELA</button>
-            <button class="btn btn-call" style="background:#3498db" onclick="callP('nome-enf', 'loc-enf', 'M')">CHAMAR ELE</button>
-        </div>
-        <div class="history-box" id="h-enfermagem"></div>
+        <label>SALA / ATENDIMENTO</label>
+        <select id="loc-enf">
+            <option value="TRIAGEM">TRIAGEM</option>
+            <option value="SALA DE VACINA">SALA DE VACINA</option>
+            <option value="SALA DE CURATIVOS">SALA DE CURATIVOS</option>
+        </select>
+        <label>NOME DO PACIENTE</label>
+        <input type="text" id="nome-enf" placeholder="Nome completo">
+        <button class="btn btn-call" onclick="callP('nome-enf', 'loc-enf', 'enfermagem')">CHAMAR PACIENTE</button>
+        <div class="history-box" id="h-enfermagem"><label>MEU HISTÓRICO</label></div>
     </div>
 
     <div id="sec-odonto" class="section">
-        <input type="text" id="nome-odonto" placeholder="Paciente Odonto">
-        <button class="btn btn-call" onclick="callP('nome-odonto', 'ODONTOLOGIA', 'F')">CHAMAR ELA</button>
-        <button class="btn btn-call" style="background:#3498db" onclick="callP('nome-odonto', 'ODONTOLOGIA', 'M')">CHAMAR ELE</button>
+        <label>NOME DO PACIENTE (ODONTO)</label>
+        <input type="text" id="nome-odonto" placeholder="Nome completo">
+        <button class="btn btn-call" onclick="callP('nome-odonto', 'ODONTOLOGIA', 'odonto')">CHAMAR PACIENTE</button>
     </div>
-
     <div id="sec-social" class="section">
-        <input type="text" id="nome-social" placeholder="Paciente Social">
-        <button class="btn btn-call" onclick="callP('nome-social', 'ASSISTENTE SOCIAL', 'F')">CHAMAR ELA</button>
-        <button class="btn btn-call" style="background:#3498db" onclick="callP('nome-social', 'ASSISTENTE SOCIAL', 'M')">CHAMAR ELE</button>
+        <label>NOME DO PACIENTE (SOCIAL)</label>
+        <input type="text" id="nome-social" placeholder="Nome completo">
+        <button class="btn btn-call" onclick="callP('nome-social', 'ASSISTENTE SOCIAL', 'social')">CHAMAR PACIENTE</button>
     </div>
 
     <div id="sec-gerencia" class="section">
-        <label>COR DA TV</label>
-        <input type="color" id="cor-tv" onchange="upColor()" value="#002b5c">
-        <label>NOVO AVISO</label>
-        <textarea id="msg" placeholder="Aviso..."></textarea>
-        <button class="btn btn-update" onclick="addA()">PUBLICAR</button>
+        <label>COR DE FUNDO DA TV</label>
+        <input type="color" id="cor-tv" onchange="upColor()" value="#002b5c" style="height:50px; cursor:pointer">
+        <label>PUBLICAR AVISO NA TV</label>
+        <textarea id="msg" placeholder="Ex: Campanha de vacinação amanhã..."></textarea>
+        <button class="btn btn-update" onclick="addA()">ADICIONAR AVISO</button>
         <div id="l-avisos"></div>
     </div>
 </div>
@@ -129,43 +132,61 @@
             pref: parseInt(document.getElementById('in-p').value) || 0,
             coleta: parseInt(document.getElementById('in-c').value) || 0
         });
-        alert("Sincronizado!");
+        alert("Senhas sincronizadas!");
     };
 
-    // Função de Chamada por SENHA (RECEPÇÃO)
-    window.call = (tipo, locId) => {
+    window.callS = (sub, locId) => {
         const local = document.getElementById(locId).value;
-        runTransaction(ref(db, 'senhas_chamadas/' + tipo), (c) => (c || 0) + 1).then(r => {
-            const dados = { nome: r.snapshot.val(), local, tipo: 'SENHA', subtipo: tipo, timestamp: Date.now() };
-            push(ref(db, 'fila'), dados);
-            addH(locId.split('-')[1], dados);
+        runTransaction(ref(db, 'senhas_chamadas/' + sub), (c) => (c || 0) + 1).then(r => {
+            const d = { nome: r.snapshot.val(), local, tipo: 'SENHA', subtipo: sub, timestamp: Date.now() };
+            push(ref(db, 'fila'), d);
+            addH('recepcao', d);
         });
     };
 
-    // Função de Chamada por NOME (MÉDICO/ENF/ETC)
-    window.callP = (inpId, locId, genero) => {
+    window.callP = (inpId, locId, hId) => {
         const nome = document.getElementById(inpId).value.toUpperCase();
         const local = document.getElementById(locId).value || locId;
-        if(!nome) return;
-        const dados = { nome, local, tipo: 'PACIENTE', genero, timestamp: Date.now() };
-        push(ref(db, 'fila'), dados);
-        addH(locId.toLowerCase().includes('consult') ? 'medico' : 'enfermagem', dados);
+        if(!nome) return alert("Digite o nome!");
+        const d = { nome, local, tipo: 'PACIENTE', timestamp: Date.now() };
+        push(ref(db, 'fila'), d);
+        addH(hId, d);
         document.getElementById(inpId).value = "";
     };
 
-    function addH(setor, d) {
-        const c = document.getElementById('h-' + setor);
+    function addH(s, d) {
+        const c = document.getElementById('h-' + s);
         if(!c) return;
         const div = document.createElement('div');
         div.className = 'hist-item';
-        div.innerHTML = `<span>${d.nome}</span><button class="btn-re" onclick="re('${d.nome}','${d.local}','${d.tipo}','${d.genero||''}','${d.subtipo||''}')">RECHAMAR</button>`;
+        div.innerHTML = `<span>${d.nome}</span><button class="btn-re" onclick="reChamar('${d.nome}','${d.local}','${d.tipo}','${d.subtipo||''}')">RECHAMAR</button>`;
         c.insertBefore(div, c.childNodes[1]);
         if(c.children.length > 4) c.removeChild(c.lastChild);
     }
 
-    window.re = (nome, local, tipo, genero, subtipo) => { push(ref(db, 'fila'), { nome, local, tipo, genero, subtipo, timestamp: Date.now() }); };
-    window.addA = () => { const t = document.getElementById('msg').value; if(t) push(ref(db, 'avisos'), { texto: t }); document.getElementById('msg').value=""; };
-    window.upColor = () => { set(ref(db, 'config/corAviso'), document.getElementById('cor-tv').value); };
+    window.reChamar = (nome, local, tipo, subtipo) => {
+        push(ref(db, 'fila'), { nome, local, tipo, subtipo, timestamp: Date.now() });
+    };
+
+    window.addA = () => {
+        const t = document.getElementById('msg').value;
+        if(t) push(ref(db, 'avisos'), { texto: t });
+        document.getElementById('msg').value = "";
+    };
+
+    onValue(ref(db, 'avisos'), (s) => {
+        const l = document.getElementById('l-avisos');
+        l.innerHTML = "";
+        s.forEach(c => {
+            const d = document.createElement('div');
+            d.style = "background:white; padding:10px; margin-top:5px; border-radius:10px; display:flex; justify-content:space-between; font-size:0.8rem;";
+            d.innerHTML = `<span>${c.val().texto}</span><button onclick="window.delA('${c.key}')" style="color:red; border:none; background:none; cursor:pointer; font-weight:bold;">X</button>`;
+            l.appendChild(d);
+        });
+    });
+
+    window.delA = (k) => remove(ref(db, 'avisos/'+k));
+    window.upColor = () => set(ref(db, 'config/corAviso'), document.getElementById('cor-tv').value);
 </script>
 </body>
 </html>
