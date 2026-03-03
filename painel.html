@@ -3,194 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel USF COHAB</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>SISTEMA USF COHAB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { 
-            font-family: 'Montserrat', sans-serif; 
-            background-color: #f0f2f5; 
-            margin: 0; padding: 20px; 
-            display: flex; justify-content: center;
-        }
+        :root { --primary: #002b5c; --accent: #2ecc71; --pref: #e67e22; --coleta: #8e44ad; --bg: #f4f7fa; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--bg); margin: 0; padding: 15px; display: flex; justify-content: center; color: #333; }
+        .app-container { background: white; width: 100%; max-width: 450px; border-radius: 35px; padding: 25px; box-shadow: 0 30px 60px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.7); }
         
-        .glass-card { 
-            background: white; 
-            width: 100%; max-width: 480px; 
-            border-radius: 30px; 
-            padding: 30px; 
-            box-shadow: 0 20px 50px rgba(0,43,92,0.15);
-            border: 1px solid #fff;
-        }
+        .brand { text-align: center; margin-bottom: 25px; }
+        .brand h1 { font-weight: 800; font-size: 1.5rem; color: var(--primary); margin: 0; letter-spacing: -1px; }
+        .brand p { font-size: 0.7rem; font-weight: 600; color: #d9534f; text-transform: uppercase; margin: 2px 0; }
 
-        .main-title { 
-            color: #002b5c; text-align: center; 
-            font-weight: 900; font-size: 1.8rem; margin: 0;
-            text-transform: uppercase; letter-spacing: -1px;
-        }
+        label { display: block; font-size: 0.65rem; font-weight: 800; color: #a1acc1; margin: 15px 0 6px 5px; text-transform: uppercase; }
+        select, input { width: 100%; padding: 14px; border-radius: 16px; border: 2px solid #edf2f7; background: #f8fafc; font-size: 0.95rem; font-weight: 600; font-family: inherit; transition: 0.3s; box-sizing: border-box; }
+        select:focus, input:focus { border-color: var(--primary); outline: none; background: #fff; box-shadow: 0 10px 20px rgba(0,43,92,0.05); }
 
-        .sub-title { 
-            color: #d9534f; text-align: center; 
-            font-weight: 700; font-size: 0.8rem; margin-bottom: 25px;
-            text-transform: uppercase;
-        }
-
-        .input-group { margin-bottom: 20px; }
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 18px; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; cursor: pointer; color: white; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); margin-top: 10px; display: flex; align-items: center; justify-content: center; }
+        .btn-call { background: linear-gradient(135deg, #002b5c, #0056b3); box-shadow: 0 8px 15px rgba(0,43,92,0.2); }
+        .btn-pref { background: linear-gradient(135deg, #f39c12, #e67e22); box-shadow: 0 8px 15px rgba(230,126,34,0.2); }
+        .btn-coleta { background: linear-gradient(135deg, #8e44ad, #9b59b6); box-shadow: 0 8px 15px rgba(142,68,173,0.2); }
+        .btn-update { background: linear-gradient(135deg, #27ae60, #2ecc71); box-shadow: 0 8px 15px rgba(39,174,96,0.2); }
         
-        label { 
-            display: block; font-size: 0.7rem; font-weight: 900; 
-            color: #778ca3; margin-bottom: 8px; text-transform: uppercase;
-            padding-left: 5px;
-        }
+        .btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
+        .btn:active { transform: translateY(1px); }
 
-        select, input, textarea { 
-            width: 100%; padding: 15px; border-radius: 15px;
-            border: 2px solid #e1e8ed; background: #f8f9fa;
-            font-size: 1rem; font-family: inherit; font-weight: 600;
-            box-sizing: border-box; transition: 0.3s;
-        }
+        /* Histórico Individual */
+        .history-box { margin-top: 25px; background: #f8fafc; border-radius: 20px; padding: 15px; border: 1px dashed #cbd5e0; }
+        .history-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border-radius: 12px; margin-bottom: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+        .history-info { font-size: 0.8rem; font-weight: 700; color: var(--primary); }
+        .btn-recall { background: #eef2f7; color: var(--primary); border: none; padding: 6px 12px; border-radius: 8px; font-size: 0.65rem; font-weight: 800; cursor: pointer; transition: 0.2s; }
+        .btn-recall:hover { background: var(--primary); color: white; }
 
-        select:focus, input:focus { 
-            border-color: #002b5c; background: #fff; outline: none;
-            box-shadow: 0 10px 20px rgba(0,43,92,0.05);
-        }
+        .section { display: none; animation: fadeIn 0.4s ease; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* BOTÕES ESTILO APP */
-        .btn { 
-            width: 100%; padding: 18px; border: none; border-radius: 18px;
-            font-weight: 900; font-size: 0.9rem; text-transform: uppercase;
-            cursor: pointer; margin-top: 12px; color: white;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        .btn-blue { 
-            background: linear-gradient(135deg, #002b5c 0%, #0056b3 100%);
-            box-shadow: 0 8px 20px rgba(0,43,92,0.3);
-        }
-
-        .btn-orange { 
-            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-            box-shadow: 0 8px 20px rgba(230,126,34,0.3);
-        }
-
-        .btn-green { 
-            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
-            box-shadow: 0 8px 20px rgba(39,174,96,0.3);
-        }
-
-        .btn:hover { transform: translateY(-4px); filter: brightness(1.1); }
-        .btn:active { transform: translateY(2px); }
-
-        .btn-outline { 
-            background: transparent; color: #d9534f; border: 2px solid #d9534f;
-            margin-top: 40px; font-size: 0.7rem;
-        }
-
-        /* Espelho Recepção */
-        .mirror-container { 
-            background: #f1f4f8; padding: 20px; border-radius: 20px;
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;
-        }
-
-        .mirror-card { text-align: center; }
-        .mirror-label { font-size: 0.6rem; font-weight: 800; color: #a1acc1; }
-        .mirror-number { font-size: 2.2rem; font-weight: 900; color: #002b5c; display: block; }
-
-        /* Lista de Avisos Gerência */
-        .aviso-pill {
-            background: #fff; padding: 12px; border-radius: 12px;
-            margin-top: 8px; display: flex; justify-content: space-between;
-            align-items: center; border: 1px solid #e1e8ed; font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        .del-x { 
-            background: #ffeded; color: #eb4d4b; border: none;
-            width: 28px; height: 28px; border-radius: 8px; cursor: pointer;
-            font-weight: 900;
-        }
-
-        .step-panel { display: none; animation: slideUp 0.4s ease; }
-        .step-panel.active { display: block; }
-
-        @keyframes slideUp { 
-            from { opacity: 0; transform: translateY(20px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
+        .mirror-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        .mirror-unit { background: #f1f4f8; padding: 10px; border-radius: 15px; text-align: center; }
+        .mirror-val { display: block; font-size: 1.2rem; font-weight: 800; color: var(--primary); }
     </style>
 </head>
 <body>
 
-<div class="glass-card">
-    <div class="header">
-        <h1 class="main-title">USF COHAB</h1>
-        <p class="sub-title">Dr. João Pereira da Rosa</p>
+<div class="app-container">
+    <div class="brand">
+        <h1>USF COHAB</h1>
+        <p>Dr. João Pereira da Rosa</p>
     </div>
 
-    <div class="input-group">
-        <label>Selecione seu Setor</label>
-        <select id="menu-setor" onchange="toggleSetor()">
-            <option value="">Escolher...</option>
-            <option value="acolhimento">Acolhimento</option>
-            <option value="recepcao">Recepção</option>
-            <option value="atendimento">Atendimento/Médico</option>
-            <option value="gerencia">Gerência</option>
-        </select>
-    </div>
+    <label>Área de Atuação</label>
+    <select id="main-setor" onchange="switchSection()">
+        <option value="">Selecione o setor...</option>
+        <option value="acolhimento">🎫 Acolhimento (Entregar Senhas)</option>
+        <option value="recepcao">🏢 Recepção (Chamar Senhas)</option>
+        <option value="medico">👨‍⚕️ Médicos (Atendimento Especializado)</option>
+        <option value="gerencia">⚙️ Gerência de Avisos</option>
+    </select>
 
-    <div id="setor-acolhimento" class="step-panel">
-        <label>Sincronizar Contador</label>
-        <div style="display:flex; gap:10px;">
-            <input type="number" id="syncN" placeholder="Normal">
-            <input type="number" id="syncP" placeholder="Pref">
+    <div id="sec-acolhimento" class="section">
+        <label>Registrar última senha entregue</label>
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
+            <input type="number" id="in-n" placeholder="Nrm">
+            <input type="number" id="in-p" placeholder="Prf">
+            <input type="number" id="in-c" placeholder="Clt">
         </div>
-        <button class="btn btn-green" onclick="sync()">Salvar Contadores</button>
-        <hr style="margin:25px 0; border:0; border-top: 1px solid #eee;">
-        <button class="btn btn-blue" onclick="callT('NORMAL', 'ACOLHIMENTO')">Chamar Normal</button>
-        <button class="btn btn-orange" onclick="callT('PREF', 'ACOLHIMENTO')">Chamar Preferencial</button>
+        <button class="btn btn-update" onclick="syncNumbers()">Sincronizar Entrega</button>
     </div>
 
-    <div id="setor-recepcao" class="step-panel">
-        <div class="mirror-container">
-            <div class="mirror-card">
-                <span class="mirror-label">NORMAL</span>
-                <span class="mirror-number" id="mirror-n">000</span>
-            </div>
-            <div class="mirror-card">
-                <span class="mirror-label" style="color:#e67e22">PREF</span>
-                <span class="mirror-number" id="mirror-p" style="color:#e67e22">000</span>
-            </div>
+    <div id="sec-recepcao" class="section">
+        <div class="mirror-grid">
+            <div class="mirror-unit"><span class="mirror-label" style="font-size:0.5rem">NORMAL</span><span class="mirror-val" id="m-n">0</span></div>
+            <div class="mirror-unit"><span class="mirror-label" style="font-size:0.5rem;color:var(--pref)">PREF</span><span class="mirror-val" id="m-p" style="color:var(--pref)">0</span></div>
+            <div class="mirror-unit"><span class="mirror-label" style="font-size:0.5rem;color:var(--coleta)">COLETA</span><span class="mirror-val" id="m-c" style="color:var(--coleta)">0</span></div>
         </div>
-        <label>Escolha o Guichê</label>
-        <select id="guiche-rep">
-            <option value="GUICHÊ 01">Guichê 01</option>
-            <option value="GUICHÊ 02">Guichê 02</option>
-            <option value="GUICHÊ 03">Guichê 03</option>
+        <label>Local de Chamada</label>
+        <select id="loc-recepcao">
+            <option value="RECEPÇÃO 01">Recepção 01</option>
+            <option value="RECEPÇÃO 02">Recepção 02</option>
+            <option value="RECEPÇÃO 03">Recepção 03</option>
         </select>
-        <button class="btn btn-blue" onclick="callT('NORMAL', 'guiche-rep')">Chamar Normal</button>
-        <button class="btn btn-orange" onclick="callT('PREF', 'guiche-rep')">Chamar Preferencial</button>
+        <button class="btn btn-call" onclick="callNext('NORMAL', 'loc-recepcao')">Chamar Normal</button>
+        <button class="btn btn-pref" onclick="callNext('PREF', 'loc-recepcao')">Chamar Preferencial</button>
+        <button class="btn btn-coleta" onclick="callNext('COLETA', 'loc-recepcao')">Chamar Coleta</button>
+        <div class="history-box" id="hist-recepcao"><label>Minhas Últimas Chamadas</label></div>
     </div>
 
-    <div id="setor-atendimento" class="step-panel">
-        <label>Sua Sala</label>
-        <input type="text" id="sala-med" placeholder="Ex: Sala 04">
+    <div id="sec-medico" class="section">
+        <label>Especialidade</label>
+        <input type="text" value="MÉDICOS" disabled style="background:#e2e8f0; color:#64748b">
+        <label>Consultório</label>
+        <select id="loc-medico">
+            <option value="CONSULTÓRIO 01">Consultório 01</option>
+            <option value="CONSULTÓRIO 02">Consultório 02</option>
+        </select>
         <label>Nome do Paciente</label>
-        <input type="text" id="nome-med" placeholder="Nome Completo">
-        <button class="btn btn-blue" onclick="callN('nome-med', 'sala-med')">Chamar Paciente</button>
+        <input type="text" id="nome-paciente" placeholder="Digite o nome aqui...">
+        <button class="btn btn-call" onclick="callPatient('nome-paciente', 'loc-medico')">Chamar Paciente</button>
+        <div class="history-box" id="hist-medico"><label>Minhas Últimas Chamadas</label></div>
     </div>
 
-    <div id="setor-gerencia" class="step-panel">
-        <label>Cor de Fundo (Avisos TV)</label>
-        <input type="color" id="cor-aviso" style="height:50px; cursor:pointer" value="#002b5c" onchange="mudarCor()">
-        
-        <label>Novo Informativo</label>
-        <textarea id="msg-aviso" rows="3" placeholder="Digite aqui..."></textarea>
-        <button class="btn btn-green" onclick="addA()">Publicar na TV</button>
-
-        <label style="margin-top:20px;">Avisos Ativos</label>
-        <div id="lista-avisos"></div>
-        
-        <button class="btn btn-outline" onclick="resetSistema()">Zerar Tudo</button>
+    <div id="sec-gerencia" class="section">
+        <label>Cor do Painel TV</label>
+        <input type="color" id="cor-tv" onchange="updateColor()" value="#002b5c" style="height:50px; padding:5px;">
+        <label>Novo Aviso</label>
+        <textarea id="txt-aviso" placeholder="Escreva o aviso..." style="width:100%; border-radius:15px; border:2px solid #edf2f7; padding:10px;"></textarea>
+        <button class="btn btn-update" onclick="sendAviso()">Publicar Aviso</button>
+        <div id="lista-geral-avisos"></div>
     </div>
 
 </div>
@@ -199,81 +117,75 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, set, push, runTransaction, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    const config = {
-        apiKey: "AIzaSyA5tayYNLD_P_ZnlWhst81Dkuz8gDv7vPU",
-        authDomain: "sistema-usf-cohab.firebaseapp.com",
-        databaseURL: "https://sistema-usf-cohab-default-rtdb.firebaseio.com",
-        projectId: "sistema-usf-cohab"
-    };
-    const app = initializeApp(config);
-    const db = getDatabase(app);
+    const config = { databaseURL: "https://sistema-usf-cohab-default-rtdb.firebaseio.com" };
+    const db = getDatabase(initializeApp(config));
 
+    // Monitor de senhas do Acolhimento
     onValue(ref(db, 'contadores'), (s) => {
-        const d = s.val() || {normal:0, pref:0};
-        document.getElementById('mirror-n').innerText = String(d.normal).padStart(3,'0');
-        document.getElementById('mirror-p').innerText = String(d.pref).padStart(3,'0');
+        const d = s.val() || {normal:0, pref:0, coleta:0};
+        document.getElementById('m-n').innerText = d.normal;
+        document.getElementById('m-p').innerText = d.pref;
+        document.getElementById('m-c').innerText = d.coleta || 0;
     });
 
-    onValue(ref(db, 'avisos'), (s) => {
-        const lista = document.getElementById('lista-avisos');
-        lista.innerHTML = "";
-        s.forEach(child => {
-            const item = document.createElement('div');
-            item.className = 'aviso-pill';
-            item.innerHTML = `<span>${child.val().texto}</span><button class="del-x" onclick="window.delA('${child.key}')">×</button>`;
-            lista.appendChild(item);
-        });
-    });
-
-    window.toggleSetor = () => {
-        const v = document.getElementById('menu-setor').value;
-        document.querySelectorAll('.step-panel').forEach(e => e.classList.remove('active'));
-        if(v) document.getElementById('setor-'+v).classList.add('active');
+    window.switchSection = () => {
+        const v = document.getElementById('main-setor').value;
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        if(v) document.getElementById('sec-' + v).classList.add('active');
     };
 
-    window.sync = () => {
-        set(ref(db, 'contadores'), { 
-            normal: parseInt(document.getElementById('syncN').value)||0, 
-            pref: parseInt(document.getElementById('syncP').value)||0 
+    window.syncNumbers = () => {
+        set(ref(db, 'contadores'), {
+            normal: parseInt(document.getElementById('in-n').value) || 0,
+            pref: parseInt(document.getElementById('in-p').value) || 0,
+            coleta: parseInt(document.getElementById('in-c').value) || 0
         });
         alert("Sincronizado!");
     };
 
-    window.callT = (tipo, localId) => {
-        const local = document.getElementById(localId)?.value || localId;
-        runTransaction(ref(db, 'contadores/'+tipo.toLowerCase()), (c) => (c || 0) + 1).then(r => {
-            push(ref(db, 'fila'), { 
-                nome: String(r.snapshot.val()).padStart(3,'0'), 
-                local, 
-                tipo: tipo==='PREF'?'senha_pref':'senha_normal', 
-                timestamp: Date.now() 
-            });
+    window.callNext = (tipo, locId) => {
+        const local = document.getElementById(locId).value;
+        runTransaction(ref(db, 'senhas_chamadas/' + tipo), (c) => (c || 0) + 1).then(r => {
+            const senha = r.snapshot.val();
+            const dados = { nome: senha, local, tipo: 'senha_' + tipo.toLowerCase(), timestamp: Date.now() };
+            push(ref(db, 'fila'), dados);
+            addToHistory(locId.split('-')[1], dados);
         });
     };
 
-    window.callN = (inp, sel) => {
-        const nome = document.getElementById(inp).value.toUpperCase();
-        const local = document.getElementById(sel).value || sel;
-        if(!nome) return alert("Digite o nome!");
-        push(ref(db, 'fila'), { nome, local, tipo: 'paciente', timestamp: Date.now() });
-        document.getElementById(inp).value = "";
+    window.callPatient = (inpId, locId) => {
+        const nome = document.getElementById(inpId).value.toUpperCase();
+        const local = document.getElementById(locId).value;
+        if(!nome) return;
+        const dados = { nome, local, tipo: 'paciente', timestamp: Date.now() };
+        push(ref(db, 'fila'), dados);
+        addToHistory('medico', dados);
+        document.getElementById(inpId).value = "";
     };
 
-    window.addA = () => {
-        const texto = document.getElementById('msg-aviso').value;
-        if(texto) { push(ref(db, 'avisos'), { texto }); document.getElementById('msg-aviso').value=""; }
+    function addToHistory(setor, dados) {
+        const container = document.getElementById('hist-' + setor);
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        item.innerHTML = `
+            <div class="history-info">${dados.nome} <br><small style="color:#666">${dados.local}</small></div>
+            <button class="btn-recall" onclick="recall('${dados.nome}', '${dados.local}', '${dados.tipo}')">RECHAMAR</button>
+        `;
+        container.insertBefore(item, container.childNodes[1]);
+        if(container.children.length > 4) container.removeChild(container.lastChild);
+    }
+
+    window.recall = (nome, local, tipo) => {
+        push(ref(db, 'fila'), { nome, local, tipo, timestamp: Date.now() });
     };
 
-    window.delA = (key) => { remove(ref(db, 'avisos/' + key)); };
-    window.mudarCor = () => { set(ref(db, 'config/corAviso'), document.getElementById('cor-aviso').value); };
-
-    window.resetSistema = () => {
-        if(confirm("Deseja zerar tudo?")) {
-            set(ref(db, 'contadores'), {normal:0, pref:0});
-            remove(ref(db, 'fila'));
-        }
+    window.sendAviso = () => {
+        const texto = document.getElementById('txt-aviso').value;
+        if(texto) { push(ref(db, 'avisos'), { texto }); document.getElementById('txt-aviso').value=""; }
     };
+
+    window.updateColor = () => { set(ref(db, 'config/corAviso'), document.getElementById('cor-tv').value); };
+
 </script>
-
 </body>
 </html>
