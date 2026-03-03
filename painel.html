@@ -12,12 +12,12 @@
         .header h1 { color: var(--primary); margin: 0; font-size: 1.6rem; font-weight: 900; }
         .header h2 { color: var(--red); margin: 0; font-size: 0.9rem; font-weight: bold; }
         label { display: block; font-weight: bold; color: var(--primary); margin: 15px 0 5px; font-size: 0.8rem; text-transform: uppercase; }
-        select, input, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
+        select, input, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; box-sizing: border-box; margin-bottom: 10px; }
         .step { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; }
         .step.active { display: block; }
         .btn-call { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
         .btn-pref { background: #f0ad4e; }
-        .btn-sync { background: #28a745; }
+        .btn-sync { background: #28a745; margin-top: 5px; }
         .btn-danger { background: #dc3545; font-size: 0.7rem; margin-top: 25px; opacity: 0.8; }
         .mirror-box { background: #e9ecef; padding: 15px; border-radius: 10px; margin-bottom: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center; border: 1px solid #ced4da; }
         .mirror-val { font-size: 1.5rem; font-weight: 900; color: var(--primary); display: block; }
@@ -32,9 +32,9 @@
             <h2>Dr. João Pereira da Rosa</h2>
         </div>
 
-        <label>SELECIONE O SETOR DE TRABALHO</label>
+        <label>SELECIONE O SETOR</label>
         <select id="menu-setor" onchange="mudarSetor()">
-            <option value="">-- Clique aqui para escolher --</option>
+            <option value="">-- Escolha o Setor --</option>
             <option value="acolhimento">🎫 ACOLHIMENTO</option>
             <option value="recepcao">🏢 RECEPÇÃO (GUICHÊS)</option>
             <option value="medico">👨‍⚕️ CONSULTÓRIO MÉDICO</option>
@@ -45,24 +45,21 @@
         </select>
 
         <div id="setor-acolhimento" class="step">
-            <label>SINCRONIZAR SENHAS</label>
             <div class="grid-sync">
-                <input type="number" id="syncN" placeholder="Normal">
-                <input type="number" id="syncP" placeholder="Pref">
+                <input type="number" id="syncN" placeholder="Nº Normal">
+                <input type="number" id="syncP" placeholder="Nº Pref">
             </div>
-            <button class="btn-call btn-sync" onclick="sync()">✅ ATUALIZAR CONTADOR</button>
+            <button class="btn-call btn-sync" onclick="sync()">✅ SINCRONIZAR CONTADORES</button>
             <hr>
             <button class="btn-call" onclick="callT('NORMAL', 'ACOLHIMENTO')">CHAMAR NORMAL</button>
             <button class="btn-call btn-pref" onclick="callT('PREF', 'ACOLHIMENTO')">CHAMAR PREFERENCIAL</button>
         </div>
 
         <div id="setor-recepcao" class="step">
-            <label>ESPELHO DO ACOLHIMENTO (ÚLTIMAS ENTREGUES)</label>
             <div class="mirror-box">
                 <div><span class="mirror-label">NORMAL</span><span class="mirror-val" id="mirror-n">000</span></div>
                 <div><span class="mirror-label">PREF.</span><span class="mirror-val" id="mirror-p" style="color:#f0ad4e">000</span></div>
             </div>
-            <label>SELECIONE SEU GUICHÊ</label>
             <select id="guiche-rep">
                 <option value="RECEPÇÃO 01">RECEPÇÃO 01</option>
                 <option value="RECEPÇÃO 02">RECEPÇÃO 02</option>
@@ -70,44 +67,37 @@
             </select>
             <button class="btn-call" onclick="callT('NORMAL', 'guiche-rep')">CHAMAR NORMAL</button>
             <button class="btn-call btn-pref" onclick="callT('PREF', 'guiche-rep')">CHAMAR PREFERENCIAL</button>
-            <button class="btn-call btn-danger" onclick="resetSistema()">⚠️ ZERAR SENHAS DO DIA</button>
+            <button class="btn-call btn-danger" onclick="resetSistema()">⚠️ ZERAR SISTEMA</button>
         </div>
 
         <div id="setor-medico" class="step">
-            <label>LOCAL (EX: SALA 04)</label>
-            <input type="text" id="sala-med" placeholder="Ex: CONSULTÓRIO 01">
-            <label>NOME DO PACIENTE</label>
-            <input type="text" id="nome-med" placeholder="NOME COMPLETO">
+            <input type="text" id="sala-med" placeholder="SALA (EX: CONSULTÓRIO 01)">
+            <input type="text" id="nome-med" placeholder="NOME DO PACIENTE">
             <button class="btn-call" onclick="callN('nome-med', 'sala-med')">CHAMAR PACIENTE</button>
         </div>
         
         <div id="setor-enfermagem" class="step">
-            <label>LOCAL</label>
             <select id="sala-enf">
                 <option value="TRIAGEM">TRIAGEM</option>
-                <option value="SALA DE VACINA">SALA DE VACINA</option>
+                <option value="VACINA">VACINA</option>
+                <option value="CURATIVO">CURATIVO</option>
             </select>
-            <label>NOME DO PACIENTE</label>
-            <input type="text" id="nome-enf" placeholder="NOME COMPLETO">
+            <input type="text" id="nome-enf" placeholder="NOME DO PACIENTE">
             <button class="btn-call" onclick="callN('nome-enf', 'sala-enf')">CHAMAR PACIENTE</button>
         </div>
 
         <div id="setor-odonto" class="step">
-            <label>NOME DO PACIENTE</label>
-            <input type="text" id="nome-odonto" placeholder="NOME COMPLETO">
+            <input type="text" id="nome-odonto" placeholder="NOME DO PACIENTE">
             <button class="btn-call" onclick="callN('nome-odonto', 'SALA DE ODONTO')">CHAMAR ODONTO</button>
         </div>
-
         <div id="setor-social" class="step">
-            <label>NOME DO PACIENTE</label>
-            <input type="text" id="nome-social" placeholder="NOME COMPLETO">
+            <input type="text" id="nome-social" placeholder="NOME DO PACIENTE">
             <button class="btn-call" onclick="callN('nome-social', 'ASSISTENTE SOCIAL')">CHAMAR SOCIAL</button>
         </div>
 
         <div id="setor-gerencia" class="step">
-            <label>TEXTO DO INFORMATIVO (TV)</label>
-            <textarea id="msg-aviso" rows="3"></textarea>
-            <button class="btn-call" onclick="addA()">PUBLICAR NA TV</button>
+            <textarea id="msg-aviso" rows="3" placeholder="Digite o aviso para a TV..."></textarea>
+            <button class="btn-call" onclick="addA()">ENVIAR AVISO PARA TV</button>
         </div>
     </div>
 
@@ -128,11 +118,11 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        onValue(ref(db, 'contadores'), (snapshot) => {
-            const data = snapshot.val();
-            if(data) {
-                document.getElementById('mirror-n').innerText = String(data.normal || 0).padStart(3, '0');
-                document.getElementById('mirror-p').innerText = String(data.pref || 0).padStart(3, '0');
+        onValue(ref(db, 'contadores'), (s) => {
+            const d = s.val();
+            if(d) {
+                document.getElementById('mirror-n').innerText = String(d.normal || 0).padStart(3, '0');
+                document.getElementById('mirror-p').innerText = String(d.pref || 0).padStart(3, '0');
             }
         });
 
@@ -143,16 +133,19 @@
         };
 
         window.sync = () => {
-            const vals = { normal: parseInt(document.getElementById('syncN').value) || 0, pref: parseInt(document.getElementById('syncP').value) || 0 };
-            set(ref(db, 'contadores'), vals);
-            alert("Sincronizado!");
+            const n = parseInt(document.getElementById('syncN').value) || 0;
+            const p = parseInt(document.getElementById('syncP').value) || 0;
+            set(ref(db, 'contadores'), { normal: n, pref: p });
+            alert("Contadores sincronizados!");
         };
 
         window.callT = (tipo, localInput) => {
-            const local = document.getElementById(localInput) ? document.getElementById(localInput).value : localInput;
-            const p = ref(db, 'contadores/' + tipo.toLowerCase());
-            runTransaction(p, (c) => (c || 0) + 1).then(r => {
-                const num = String(r.snapshot.val()).padStart(3, '0');
+            const el = document.getElementById(localInput);
+            const local = el ? el.value : localInput;
+            const path = ref(db, 'contadores/' + tipo.toLowerCase());
+            
+            runTransaction(path, (current) => (current || 0) + 1).then(result => {
+                const num = String(result.snapshot.val()).padStart(3, '0');
                 push(ref(db, 'fila'), { 
                     nome: num, 
                     local: local, 
@@ -164,19 +157,20 @@
 
         window.callN = (inp, sel) => {
             const nome = document.getElementById(inp).value.toUpperCase();
-            const local = document.getElementById(sel).value || document.getElementById(sel).innerText || sel;
-            if(!nome) return alert("Nome vazio!");
+            const elSel = document.getElementById(sel);
+            const local = elSel ? elSel.value : sel;
+            if(!nome) return alert("Digite o nome!");
             push(ref(db, 'fila'), { nome, local, tipo: 'paciente', timestamp: Date.now() });
             document.getElementById(inp).value = "";
         };
 
         window.addA = () => {
             const texto = document.getElementById('msg-aviso').value;
-            if(texto) { push(ref(db, 'avisos'), { texto }); alert("Aviso enviado!"); }
+            if(texto) { push(ref(db, 'avisos'), { texto }); alert("Aviso enviado!"); document.getElementById('msg-aviso').value=""; }
         };
 
         window.resetSistema = () => {
-            if (prompt("Senha de segurança (usfcohab):") === "usfcohab") {
+            if (prompt("Senha (usfcohab):") === "usfcohab") {
                 set(ref(db, 'contadores'), { normal: 0, pref: 0 });
                 remove(ref(db, 'fila'));
                 alert("Resetado!");
