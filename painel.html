@@ -79,6 +79,8 @@
         <select id="loc-med">
             <option value="CONSULTÓRIO 01">CONSULTÓRIO 01</option>
             <option value="CONSULTÓRIO 02">CONSULTÓRIO 02</option>
+            <option value="CONSULTÓRIO 03">CONSULTÓRIO 03</option>
+            <option value="CONSULTÓRIO 04">CONSULTÓRIO 04</option>
         </select>
         <input type="text" id="nome-med" placeholder="NOME DO PACIENTE">
         <button class="btn btn-call" onclick="callP('nome-med', 'loc-med', 'medico')">CHAMAR AGORA</button>
@@ -147,15 +149,17 @@
 
     onValue(ref(db, 'acolhimento_entregue'), (s) => {
         const d = s.val() || { NORMAL:0, PREF:0, COLETA:0 };
-        document.getElementById('mon-n').innerText = d.NORMAL;
-        document.getElementById('mon-p').innerText = d.PREF;
-        document.getElementById('mon-c').innerText = d.COLETA;
+        document.getElementById('mon-n').innerText = d.NORMAL < 10 ? '0' + d.NORMAL : d.NORMAL;
+        document.getElementById('mon-p').innerText = d.PREF < 10 ? '0' + d.PREF : d.PREF;
+        document.getElementById('mon-c').innerText = d.COLETA < 10 ? '0' + d.COLETA : d.COLETA;
     });
 
     window.callS = (sub, locId, hId) => {
         const local = document.getElementById(locId).value;
         runTransaction(ref(db, 'senhas_chamadas/' + sub), (c) => (c || 0) + 1).then(r => {
-            const d = { nome: r.snapshot.val(), local, tipo: 'SENHA', subtipo: sub, timestamp: Date.now() };
+            let num = r.snapshot.val();
+            let senhaFormatada = num < 10 ? '0' + num : num.toString();
+            const d = { nome: senhaFormatada, local: local, tipo: 'SENHA', subtipo: sub, timestamp: Date.now() };
             push(ref(db, 'fila'), d);
             addH(hId, d);
         });
@@ -176,9 +180,10 @@
         if(!c) return;
         const div = document.createElement('div');
         div.className = 'hist-item';
-        div.innerHTML = `<span>${d.nome}</span><button class="btn-re" onclick="window.reChamar('${d.nome}','${d.local}','${d.tipo}','${d.subtipo||''}')">RECHAMAR</button>`;
+        let tag = d.subtipo ? ` (${d.subtipo})` : '';
+        div.innerHTML = `<span>${d.nome}${tag}</span><button class="btn-re" onclick="window.reChamar('${d.nome}','${d.local}','${d.tipo}','${d.subtipo||''}')">RECHAMAR</button>`;
         c.insertBefore(div, c.childNodes[1] || null);
-        if(c.children.length > 6) c.removeChild(c.lastChild);
+        if(c.children.length > 7) c.removeChild(c.lastChild);
     }
 
     window.reChamar = (nome, local, tipo, subtipo) => {
