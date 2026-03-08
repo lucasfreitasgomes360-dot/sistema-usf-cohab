@@ -12,15 +12,13 @@
         .brand { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .brand h1 { font-weight: 900; color: var(--primary); margin: 0; font-size: 1.4rem; }
         label { display: block; font-size: 0.7rem; font-weight: 800; color: #778ca3; margin: 15px 0 5px; text-transform: uppercase; }
-        select, input, textarea { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #edf2f7; font-size: 1rem; font-weight: 600; font-family: inherit; box-sizing: border-box; margin-bottom: 10px; }
+        select, input { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #edf2f7; font-size: 1rem; font-weight: 600; font-family: inherit; box-sizing: border-box; margin-bottom: 10px; }
         .btn { width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; text-transform: uppercase; cursor: pointer; color: white; margin-top: 10px; transition: 0.2s; }
         .btn-call { background: var(--primary); }
-        .btn-update { background: var(--accent); }
-        .btn-danger { background: var(--red); margin-top: 20px; }
-        .section { display: none; animation: slideIn 0.3s ease-out; }
+        .section { display: none; animation: fadeIn 0.3s; }
         .section.active { display: block; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .history-box { margin-top: 20px; background: #f8fafc; border-radius: 15px; padding: 10px; border: 1px dashed #cbd5e0; min-height: 50px; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .history-box { margin-top: 20px; background: #f8fafc; border-radius: 15px; padding: 10px; border: 1px dashed #cbd5e0; }
         .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border-radius: 12px; margin-bottom: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.03); font-size: 0.8rem; font-weight: 700; color: var(--primary); }
         .hist-time { color: var(--red); font-size: 0.7rem; margin-right: 5px; }
         .btn-re { background: #eef2f7; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 0.65rem; color: var(--primary); }
@@ -30,110 +28,101 @@
 <div class="app-container">
     <div class="brand"><h1>USF COHAB</h1><p style="color:var(--red); font-weight:bold; font-size:0.7rem; margin:0;">DR. JOÃO PEREIRA DA ROSA</p></div>
     
-    <label>SELECIONE SEU SETOR</label>
-    <select id="main-setor" onchange="showSec()">
-        <option value="">Escolha seu setor...</option>
-        <option value="acolhimento">🎫 ACOLHIMENTO (ENTREGA)</option>
-        <option value="recepcao">🏢 RECEPÇÃO (CHAMADA)</option>
-        <option value="medico">👨‍⚕️ MÉDICOS / CONSULTÓRIOS</option>
-        <option value="enfermagem">👩‍⚕️ ENFERMAGEM / SALAS</option>
-        <option value="odonto">🦷 ODONTOLOGIA</option>
-        <option value="social">🤝 ASSISTENTE SOCIAL</option>
-        <option value="gerencia">⚙️ GERÊNCIA / CONFIGS</option>
+    <label>QUEM ESTÁ USANDO?</label>
+    <select id="main-setor" onchange="trocarSetor()">
+        <option value="">Selecione seu local...</option>
+        <option value="REC1">RECEPÇÃO 01</option>
+        <option value="REC2">RECEPÇÃO 02</option>
+        <option value="MED1">CONSULTÓRIO 01</option>
+        <option value="MED2">CONSULTÓRIO 02</option>
+        <option value="MED3">CONSULTÓRIO 03</option>
+        <option value="ENF_TRI">SALA DE TRIAGEM</option>
+        <option value="ENF_VAC">SALA DE VACINA</option>
+        <option value="ODONTO">ODONTOLOGIA</option>
     </select>
 
-    <div id="sec-recepcao" class="section">
-        <label>LOCAL</label>
-        <select id="loc-recepcao"><option value="RECEPÇÃO 01">RECEPÇÃO 01</option><option value="RECEPÇÃO 02">RECEPÇÃO 02</option><option value="RECEPÇÃO 03">RECEPÇÃO 03</option></select>
-        <button class="btn btn-call" onclick="callS('NORMAL', 'loc-recepcao', 'recepcao')">CHAMAR NORMAL</button>
-        <button class="btn btn-call" style="background:var(--pref)" onclick="callS('PREF', 'loc-recepcao', 'recepcao')">CHAMAR PREFERENCIAL</button>
-        <button class="btn btn-call" style="background:var(--coleta)" onclick="callS('COLETA', 'loc-recepcao', 'recepcao')">CHAMAR COLETA</button>
-        <div class="history-box" id="h-recepcao"><label>MEU HISTÓRICO</label></div>
+    <div id="area-chamada" class="section">
+        <div id="campos-dinamicos"></div>
+        <button class="btn btn-call" id="btn-principal" onclick="dispararChamada()">CHAMAR AGORA</button>
+        
+        <div class="history-box">
+            <label>MEU HISTÓRICO DE HOJE</label>
+            <div id="meu-historico"></div>
+        </div>
     </div>
-
-    <div id="sec-medico" class="section">
-        <label>CONSULTÓRIO</label>
-        <select id="loc-med"><option value="CONSULTÓRIO 01">CONSULTÓRIO 01</option><option value="CONSULTÓRIO 02">CONSULTÓRIO 02</option><option value="CONSULTÓRIO 03">CONSULTÓRIO 03</option><option value="CONSULTÓRIO 04">CONSULTÓRIO 04</option></select>
-        <input type="text" id="nome-med" placeholder="NOME DO PACIENTE">
-        <button class="btn btn-call" onclick="callP('nome-med', 'loc-med', 'medico')">CHAMAR AGORA</button>
-        <div class="history-box" id="h-medico"><label>MEU HISTÓRICO</label></div>
-    </div>
-
-    <div id="sec-enfermagem" class="section">
-        <label>SALA</label>
-        <select id="loc-enf"><option value="TRIAGEM">TRIAGEM</option><option value="COLETA">COLETA</option><option value="SALA DE VACINA">SALA DE VACINA</option><option value="CURATIVO">CURATIVO</option></select>
-        <input type="text" id="nome-enf" placeholder="NOME DO PACIENTE">
-        <button class="btn btn-call" onclick="callP('nome-enf', 'loc-enf', 'enfermagem')">CHAMAR AGORA</button>
-        <div class="history-box" id="h-enfermagem"><label>MEU HISTÓRICO</label></div>
-    </div>
-
-    <div id="sec-odonto" class="section">
-        <label>PACIENTE ODONTO</label><input type="text" id="nome-odonto" placeholder="NOME">
-        <button class="btn btn-call" onclick="callP('nome-odonto', 'ODONTOLOGIA', 'odonto')">CHAMAR</button>
-        <div class="history-box" id="h-odonto"><label>MEU HISTÓRICO</label></div>
-    </div>
-
-    <div id="sec-social" class="section">
-        <label>PACIENTE SOCIAL</label><input type="text" id="nome-social" placeholder="NOME">
-        <button class="btn btn-call" onclick="callP('nome-social', 'ASSISTENTE SOCIAL', 'social')">CHAMAR</button>
-        <div class="history-box" id="h-social"><label>MEU HISTÓRICO</label></div>
-    </div>
-
-    </div>
+</div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, set, push, runTransaction, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, push, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
     
     const config = { databaseURL: "https://sistema-usf-cohab-default-rtdb.firebaseio.com" };
     const db = getDatabase(initializeApp(config));
 
-    window.showSec = () => {
-        const v = document.getElementById('main-setor').value;
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        if(v) document.getElementById('sec-' + v).classList.add('active');
+    let setorAtual = "";
+    const histLocal = [];
+
+    window.trocarSetor = () => {
+        setorAtual = document.getElementById('main-setor').value;
+        const area = document.getElementById('area-chamada');
+        const campos = document.getElementById('campos-dinamicos');
+        const btn = document.getElementById('btn-principal');
+        
+        if(!setorAtual) { area.classList.remove('active'); return; }
+        
+        area.classList.add('active');
+        document.getElementById('meu-historico').innerHTML = ""; // Limpa visual do histórico anterior
+        
+        // Configura a tela baseada no setor
+        if(setorAtual.startsWith('REC')) {
+            campos.innerHTML = `<label>TIPO DE SENHA</label><select id="sub-tipo"><option value="NORMAL">NORMAL</option><option value="PREF">PREFERENCIAL</option><option value="COLETA">DE COLETA</option></select>`;
+            btn.innerText = "CHAMAR PRÓXIMA SENHA";
+        } else {
+            campos.innerHTML = `<label>NOME DO PACIENTE</label><input type="text" id="nome-paciente" placeholder="Digite o nome...">`;
+            btn.innerText = "CHAMAR PACIENTE";
+        }
     };
 
-    const getHora = () => new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    window.dispararChamada = () => {
+        const localNome = document.getElementById('main-setor').options[document.getElementById('main-setor').selectedIndex].text;
+        const hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-    window.callS = (sub, locId, hId) => {
-        const local = document.getElementById(locId).value;
-        const hora = getHora();
-        runTransaction(ref(db, 'senhas_chamadas/' + sub), (c) => (c || 0) + 1).then(r => {
-            let num = r.snapshot.val();
-            let sForm = num < 10 ? '0' + num : num.toString();
-            const d = { nome: sForm, local: local, tipo: 'SENHA', subtipo: sub, timestamp: Date.now(), hora: hora };
-            push(ref(db, 'fila'), d); 
-            addH(hId, d);
-        });
+        if(setorAtual.startsWith('REC')) {
+            const sub = document.getElementById('sub-tipo').value;
+            runTransaction(ref(db, 'senhas_chamadas/' + sub), (c) => (c || 0) + 1).then(r => {
+                const num = r.snapshot.val();
+                enviarParaFila(num < 10 ? '0'+num : num, localNome, 'SENHA', sub, hora);
+            });
+        } else {
+            const nome = document.getElementById('nome-paciente').value.toUpperCase();
+            if(!nome) return;
+            enviarParaFila(nome, localNome, 'PACIENTE', '', hora);
+            document.getElementById('nome-paciente').value = "";
+        }
     };
 
-    window.callP = (inpId, locId, hId) => {
-        const input = document.getElementById(inpId);
-        const nome = input.value.toUpperCase();
-        const local = document.getElementById(locId)?.value || locId;
-        const hora = getHora();
-        if(!nome) return;
-        const d = { nome, local, tipo: 'PACIENTE', timestamp: Date.now(), hora: hora };
-        push(ref(db, 'fila'), d); 
-        addH(hId, d);
-        input.value = "";
-    };
+    function enviarParaFila(nome, local, tipo, subtipo, hora) {
+        const dados = { nome, local, tipo, subtipo, hora, timestamp: Date.now() };
+        push(ref(db, 'fila'), dados);
+        atualizarHistUI(dados);
+    }
 
-    function addH(sectionId, d) {
-        const container = document.getElementById('h-' + sectionId);
-        if(!container) return;
+    function atualizarHistUI(d) {
+        const lista = document.getElementById('meu-historico');
         const div = document.createElement('div');
         div.className = 'hist-item';
-        let displayNome = (d.tipo === 'SENHA') ? `${d.subtipo} ${d.nome}` : d.nome;
-        div.innerHTML = `<div><span class="hist-time">${d.hora}</span> <span>${displayNome}</span></div>
-                         <button class="btn-re" onclick="window.reChamar('${d.nome}','${d.local}','${d.tipo}','${d.subtipo||''}')">RECHAMAR</button>`;
-        container.insertBefore(div, container.firstChild.nextSibling); // Insere logo abaixo do Label
-        if(container.children.length > 8) container.removeChild(container.lastChild);
+        let texto = (d.tipo === 'SENHA') ? `${d.subtipo} ${d.nome}` : d.nome;
+        div.innerHTML = `<div><span class="hist-time">${d.hora}</span> ${texto}</div>
+                         <button class="btn-re" onclick="window.reChamar('${d.nome}','${d.local}','${d.tipo}','${d.subtipo}')">RECHAMAR</button>`;
+        lista.insertBefore(div, lista.firstChild);
+        if(lista.children.length > 6) lista.removeChild(lista.lastChild);
     }
 
     window.reChamar = (nome, local, tipo, subtipo) => {
-        push(ref(db, 'fila'), { nome, local, tipo, subtipo, timestamp: Date.now(), hora: getHora() });
+        const hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        const dados = { nome, local, tipo, subtipo, hora, timestamp: Date.now() };
+        push(ref(db, 'fila'), dados);
+        atualizarHistUI(dados);
     };
 </script>
 </body>
