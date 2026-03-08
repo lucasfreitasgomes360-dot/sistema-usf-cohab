@@ -30,7 +30,8 @@
 </head>
 <body>
 <div class="app-container">
-    <div class="brand"><h1>USF COHAB</h1><p style="color:var(--red); font-weight:bold; font-size:0.7rem; margin:0;">DR. OLIMPIO CAVALHEIRO</p></div>
+    <div class="brand"><h1>USF COHAB</h1><p style="color:var(--red); font-weight:bold; font-size:0.7rem; margin:0;">DR. JOÃO PEREIRA DA ROSA</p></div>
+    
     <label>SELECIONE SEU SETOR</label>
     <select id="main-setor" onchange="showSec()">
         <option value="">Escolha seu setor...</option>
@@ -44,11 +45,11 @@
     </select>
 
     <div id="sec-acolhimento" class="section">
-        <label>ÚLTIMA SENHA ENTREGUE</label>
+        <label>SENHAS ENTREGUES NO PAPEL</label>
         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
-            <div><label>NORMAL</label><input type="number" id="in-acolh-n" placeholder="0"></div>
+            <div><label>NORM</label><input type="number" id="in-acolh-n" placeholder="0"></div>
             <div><label>PREF</label><input type="number" id="in-acolh-p" placeholder="0"></div>
-            <div><label>COLETA</label><input type="number" id="in-acolh-c" placeholder="0"></div>
+            <div><label>COLT</label><input type="number" id="in-acolh-c" placeholder="0"></div>
         </div>
         <button class="btn btn-update" onclick="updateAcolhimento()">ATUALIZAR MONITOR</button>
     </div>
@@ -59,36 +60,53 @@
             <div><div class="monitor-label">PREF</div><div id="mon-p" class="monitor-val">00</div></div>
             <div><div class="monitor-label">COLT</div><div id="mon-c" class="monitor-val">00</div></div>
         </div>
-        <label>LOCAL</label>
-        <select id="loc-recepcao"><option value="RECEPÇÃO 01">RECEPÇÃO 01</option><option value="RECEPÇÃO 02">RECEPÇÃO 02</option><option value="RECEPÇÃO 03">RECEPÇÃO 03</option></select>
+        <label>LOCAL DE CHAMADA</label>
+        <select id="loc-recepcao">
+            <option value="RECEPÇÃO 01">RECEPÇÃO 01</option>
+            <option value="RECEPÇÃO 02">RECEPÇÃO 02</option>
+            <option value="RECEPÇÃO 03">RECEPÇÃO 03</option>
+        </select>
         <button class="btn btn-call" onclick="callS('NORMAL', 'loc-recepcao', 'recepcao')">CHAMAR NORMAL</button>
         <button class="btn btn-call" style="background:var(--pref)" onclick="callS('PREF', 'loc-recepcao', 'recepcao')">CHAMAR PREFERENCIAL</button>
         <button class="btn btn-call" style="background:var(--coleta)" onclick="callS('COLETA', 'loc-recepcao', 'recepcao')">CHAMAR COLETA</button>
-        <div class="history-box" id="h-recepcao"><label>MEU HISTÓRICO</label></div>
+        <div class="history-box" id="h-recepcao"></div>
     </div>
 
     <div id="sec-medico" class="section">
         <label>CONSULTÓRIO</label>
-        <select id="loc-med"><option value="CONSULTÓRIO 01">CONSULTÓRIO 01</option><option value="CONSULTÓRIO 02">CONSULTÓRIO 02</option><option value="CONSULTÓRIO 03">CONSULTÓRIO 03</option><option value="CONSULTÓRIO 04">CONSULTÓRIO 04</option></select>
+        <select id="loc-med">
+            <option value="CONSULTÓRIO 01">CONSULTÓRIO 01</option>
+            <option value="CONSULTÓRIO 02">CONSULTÓRIO 02</option>
+            <option value="CONSULTÓRIO 03">CONSULTÓRIO 03</option>
+            <option value="CONSULTÓRIO 04">CONSULTÓRIO 04</option>
+        </select>
         <input type="text" id="nome-med" placeholder="NOME DO PACIENTE">
         <button class="btn btn-call" onclick="callP('nome-med', 'loc-med', 'medico')">CHAMAR AGORA</button>
-        <div class="history-box" id="h-medico"><label>MEU HISTÓRICO</label></div>
+        <div class="history-box" id="h-medico"></div>
     </div>
 
     <div id="sec-enfermagem" class="section">
         <label>SALA</label>
-        <select id="loc-enf"><option value="TRIAGEM">TRIAGEM</option><option value="COLETA">COLETA</option><option value="SALA DE VACINA">SALA DE VACINA</option><option value="CURATIVO">CURATIVO</option><option value="CONSULTÓRIO DE ENFERMAGEM">CONSULTÓRIO DE ENFERMAGEM</option></select>
+        <select id="loc-enf">
+            <option value="TRIAGEM">TRIAGEM</option>
+            <option value="COLETA">COLETA</option>
+            <option value="SALA DE VACINA">SALA DE VACINA</option>
+            <option value="CURATIVO">CURATIVO</option>
+            <option value="CONSULTÓRIO DE ENFERMAGEM">CONSULTÓRIO DE ENFERMAGEM</option>
+        </select>
         <input type="text" id="nome-enf" placeholder="NOME DO PACIENTE">
         <button class="btn btn-call" onclick="callP('nome-enf', 'loc-enf', 'enfermagem')">CHAMAR AGORA</button>
-        <div class="history-box" id="h-enfermagem"><label>MEU HISTÓRICO</label></div>
+        <div class="history-box" id="h-enfermagem"></div>
     </div>
 
-    <div id="sec-odonto" class="section"><label>PACIENTE ODONTO</label><input type="text" id="nome-odonto" placeholder="NOME"><button class="btn btn-call" onclick="callP('nome-odonto', 'ODONTOLOGIA', 'odonto')">CHAMAR</button><div class="history-box" id="h-odonto"></div></div>
-    <div id="sec-social" class="section"><label>PACIENTE SOCIAL</label><input type="text" id="nome-social" placeholder="NOME"><button class="btn btn-call" onclick="callP('nome-social', 'ASSISTENTE SOCIAL', 'social')">CHAMAR</button><div class="history-box" id="h-social"></div></div>
+    <div id="sec-odonto" class="section"><label>ODONTOLOGIA</label><input type="text" id="nome-odonto" placeholder="NOME"><button class="btn btn-call" onclick="callP('nome-odonto', 'ODONTOLOGIA', 'odonto')">CHAMAR</button><div class="history-box" id="h-odonto"></div></div>
     
+    <div id="sec-social" class="section"><label>ASSISTENTE SOCIAL</label><input type="text" id="nome-social" placeholder="NOME"><button class="btn btn-call" onclick="callP('nome-social', 'ASSISTENTE SOCIAL', 'social')">CHAMAR</button><div class="history-box" id="h-social"></div></div>
+
     <div id="sec-gerencia" class="section">
         <label>COR DA BARRA DE AVISO</label><input type="color" id="cor-tv" onchange="upColor()" value="#2ecc71">
-        <label>NOVO AVISO PARA TV</label><textarea id="msg" placeholder="DIGITE O AVISO..."></textarea><button class="btn btn-update" onclick="addA()">PUBLICAR NA TV</button><div id="l-avisos"></div>
+        <label>NOVO AVISO PARA TV</label><textarea id="msg" placeholder="DIGITE O AVISO..."></textarea><button class="btn btn-update" onclick="addA()">PUBLICAR NA TV</button>
+        <div id="l-avisos"></div>
         <button class="btn btn-danger" onclick="resetSenhas()">🚫 ZERAR TUDO (SENHA 1234)</button>
     </div>
 </div>
@@ -96,6 +114,8 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, set, push, runTransaction, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    
+    // CONFIGURAÇÃO DA COHAB
     const config = { databaseURL: "https://sistema-usf-cohab-default-rtdb.firebaseio.com" };
     const db = getDatabase(initializeApp(config));
 
@@ -107,8 +127,8 @@
         const local = document.getElementById(locId).value;
         runTransaction(ref(db, 'senhas_chamadas/' + sub), (c) => (c || 0) + 1).then(r => {
             let num = r.snapshot.val();
-            let senhaFormatada = num < 10 ? '0' + num : num.toString();
-            const d = { nome: senhaFormatada, local: local, tipo: 'SENHA', subtipo: sub, timestamp: Date.now() };
+            let sForm = num < 10 ? '0' + num : num.toString();
+            const d = { nome: sForm, local: local, tipo: 'SENHA', subtipo: sub, timestamp: Date.now() };
             push(ref(db, 'fila'), d); addH(hId, d);
         });
     };
@@ -119,8 +139,7 @@
     onValue(ref(db, 'avisos'), (s) => { const l = document.getElementById('l-avisos'); l.innerHTML = ""; s.forEach(c => { const d = document.createElement('div'); d.style = "background:white; padding:10px; margin-top:5px; border-radius:10px; display:flex; justify-content:space-between; font-size:0.8rem; border-left: 5px solid var(--primary);"; d.innerHTML = `<span>${c.val().texto}</span><button onclick="window.delA('${c.key}')" style="color:red; border:none; background:none; cursor:pointer; font-weight:bold;">X</button>`; l.appendChild(d); }); });
     window.delA = (k) => remove(ref(db, 'avisos/'+k));
     window.upColor = () => set(ref(db, 'config/corAviso'), document.getElementById('cor-tv').value);
-    window.resetSenhas = () => { if(prompt("Digite a senha:") === "1234") { set(ref(db, 'senhas_chamadas'), { NORMAL: 0, PREF: 0, COLETA: 0 }); set(ref(db, 'acolhimento_entregue'), { NORMAL: 0, PREF: 0, COLETA: 0 }); alert("Sistema zerado!"); } };
+    window.resetSenhas = () => { if(prompt("Senha:") === "1234") { set(ref(db, 'senhas_chamadas'), { NORMAL: 0, PREF: 0, COLETA: 0 }); set(ref(db, 'acolhimento_entregue'), { NORMAL: 0, PREF: 0, COLETA: 0 }); alert("Zerado!"); } };
 </script>
 </body>
 </html>
-
