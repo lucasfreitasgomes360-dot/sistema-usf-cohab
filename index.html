@@ -3,25 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>USF COHAB - Início</title>
+    <title>SISTEMA USF COHAB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #003366; --red: #d9534f; --bg: #f0f2f5; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; }
-        .card { background: white; width: 90%; max-width: 500px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 15px solid var(--primary); padding: 40px 20px; text-align: center; }
-        h1 { color: var(--primary); margin: 0; text-transform: uppercase; font-weight: 800; }
-        h2 { color: var(--red); font-size: 1.1rem; margin-bottom: 30px; }
-        .btn-link { display: block; padding: 20px; margin: 10px 30px; border: 2px solid #eee; border-radius: 15px; text-decoration: none; color: var(--primary); font-weight: bold; transition: 0.3s; }
-        .btn-link:hover { border-color: var(--primary); background: #f8faff; transform: translateY(-3px); }
+        :root { --primary: #002b5c; --accent: #ffcc00; --red: #d9534f; --bg: #f4f7fa; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--bg); margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; }
+        .container { text-align: center; background: white; padding: 50px; border-radius: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); max-width: 500px; width: 90%; }
+        .brand h1 { font-weight: 900; color: var(--primary); font-size: 2.2rem; margin: 0; }
+        .brand p { color: var(--red); font-weight: 800; font-size: 0.9rem; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .menu { margin-top: 40px; display: grid; gap: 20px; }
+        .btn-link { text-decoration: none; padding: 25px; border-radius: 20px; font-weight: 900; font-size: 1.2rem; text-transform: uppercase; transition: 0.3s; display: block; border: 3px solid transparent; }
+        .btn-tv { background: var(--primary); color: var(--accent); }
+        .btn-tv:hover { transform: scale(1.05); box-shadow: 0 10px 20px rgba(0,43,92,0.3); }
+        .btn-painel { background: white; color: var(--primary); border-color: var(--primary); }
+        .btn-painel:hover { background: var(--bg); transform: scale(1.05); }
+        .footer-info { margin-top: 40px; color: #778ca3; font-size: 0.75rem; font-weight: 600; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>USF COHAB</h1>
-        <h2>Dr. Olimpio Cavalheiro</h2>
-        <a href="painel.html" class="btn-link">🎫 PAINEL DE CONTROLE</a>
-        <a href="tv.html" class="btn-link">📺 MONITOR DA TV</a>
-        <p style="font-size: 0.8rem; color: #888; margin-top: 20px;">Desenvolvido por Lucas Freitas Gomes © 2026</p>
-    </div>
-</body>
 
+<div class="container">
+    <div class="brand">
+        <h1>USF COHAB</h1>
+        <p>Dr. João Pereira da Rosa</p>
+    </div>
+
+    <div class="menu">
+        <a href="tv.html" class="btn-link btn-tv">📺 ABRIR MONITOR (TV)</a>
+        <a href="painel.html" class="btn-link btn-painel">💻 ABRIR PAINEL</a>
+    </div>
+
+    <div class="footer-info">
+        Desenvolvido por LUCAS FREITAS GOMES<br>
+        SISTEMA ATUALIZADO 2026
+    </div>
+</div>
+
+</body>
 </html>
