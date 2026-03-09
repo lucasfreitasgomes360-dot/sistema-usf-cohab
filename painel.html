@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Chamador - USF COHAB</title>
+    <title>Chamador - USF Aero Rancho IV</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
     <style>
@@ -16,6 +16,7 @@
         label { font-weight: bold; display: block; margin-bottom: 8px; font-size: 0.85rem; color: var(--primary); text-transform: uppercase; }
         select, input { width: 100%; padding: 14px; border-radius: 10px; border: 2px solid #ddd; box-sizing: border-box; font-size: 1rem; margin-bottom: 10px; }
         .btn { border: none; border-radius: 10px; padding: 15px; font-weight: bold; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; color: white; text-transform: uppercase; width: 100%; margin-bottom: 10px; transition: filter 0.2s; }
+        .btn:hover { filter: brightness(1.1); }
         .btn-blue { background: var(--secondary); }
         .btn-orange { background: var(--warning); }
         .btn-green { background: var(--success); }
@@ -38,8 +39,8 @@
     <div id="toast">Operação realizada!</div>
     <div class="container">
         <div class="header-unidade">
-            <h2>USF COHAB</h2>
-            <p>Dr. João Pereira da Rosa</p>
+            <h2>USF AERO RANCHO IV</h2>
+            <p>Dr. Nelson Tokuei Simabukuro</p>
         </div>
         
         <div class="card-setor">
@@ -120,7 +121,7 @@
 
     <div class="footer-creditos">
         Desenvolvido por <b>Lucas Freitas Gomes</b> &copy; 2026<br>
-        USF COHAB
+        USF Aero Rancho IV
     </div>
 
     <script>
@@ -259,7 +260,7 @@
         }
         function prepararEdicao(key, msg, cor) { document.getElementById('inputAvisoUnidade').value = msg; document.getElementById('corAviso').value = cor; document.getElementById('editAvisoKey').value = key; document.getElementById('btnSalvarAviso').innerText = "💾 SALVAR ALTERAÇÃO"; }
         function excluirAviso(key) { if(confirm("Excluir?")) database.ref('avisos_unidade/'+key).remove(); }
-        function resetContadores() { if(confirm("Zerar?")) { const pass = prompt("Senha:"); if(btoa(pass) === "Y29oYWIyMDI2") { database.ref('contador').set({ NORMAL: 0, PREFERENCIAL: 0, COLETA: 0, ODONTO: 0 }); database.ref('acolhimento').set({ normal: 0, pref: 0, coleta: 0, odonto: 0 }); mostrarToast("Resetado!"); } } }
+        function resetContadores() { if(confirm("Zerar?")) { const pass = prompt("Senha:"); if(btoa(pass) === "YWVyb3JhbmNob2l2") { database.ref('contador').set({ NORMAL: 0, PREFERENCIAL: 0, COLETA: 0, ODONTO: 0 }); database.ref('acolhimento').set({ normal: 0, pref: 0, coleta: 0, odonto: 0 }); mostrarToast("Resetado!"); } } }
     </script>
 </body>
 </html>
