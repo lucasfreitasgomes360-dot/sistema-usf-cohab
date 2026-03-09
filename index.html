@@ -3,41 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA USF COHAB</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Sistema de Chamadas - USF COHAB</title>
     <style>
-        :root { --primary: #002b5c; --accent: #ffcc00; --red: #d9534f; --bg: #f4f7fa; }
-        body { font-family: 'Montserrat', sans-serif; background: var(--bg); margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; }
-        .container { text-align: center; background: white; padding: 50px; border-radius: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); max-width: 500px; width: 90%; }
-        .brand h1 { font-weight: 900; color: var(--primary); font-size: 2.2rem; margin: 0; }
-        .brand p { color: var(--red); font-weight: 800; font-size: 0.9rem; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
-        .menu { margin-top: 40px; display: grid; gap: 20px; }
-        .btn-link { text-decoration: none; padding: 25px; border-radius: 20px; font-weight: 900; font-size: 1.2rem; text-transform: uppercase; transition: 0.3s; display: block; border: 3px solid transparent; }
-        .btn-tv { background: var(--primary); color: var(--accent); }
-        .btn-tv:hover { transform: scale(1.05); box-shadow: 0 10px 20px rgba(0,43,92,0.3); }
-        .btn-painel { background: white; color: var(--primary); border-color: var(--primary); }
-        .btn-painel:hover { background: var(--bg); transform: scale(1.05); }
-        .footer-info { margin-top: 40px; color: #778ca3; font-size: 0.75rem; font-weight: 600; }
+        :root { --primary: #002b5c; --secondary: #007bff; --accent: #ffcc00; --bg: #f4f7f9; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; color: #333; }
+        .container { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center; max-width: 500px; width: 90%; border-top: 10px solid var(--primary); }
+        .logo-area h1 { margin: 0; color: var(--primary); font-size: 1.8rem; font-weight: 900; }
+        .subtitulo-dr { color: #d32f2f; font-weight: bold; margin-top: 5px; text-transform: uppercase; font-size: 0.9rem; }
+        .menu-grid { margin-top: 30px; display: grid; gap: 15px; }
+        .card-link { display: flex; flex-direction: column; padding: 20px; background: #fff; border: 2px solid #eee; border-radius: 15px; text-decoration: none; transition: all 0.3s ease; }
+        .card-link:hover { border-color: var(--secondary); transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+        .card-link b { color: var(--primary); font-size: 1.1rem; }
+        .card-link span { color: #777; font-size: 0.85rem; margin-top: 4px; }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <div class="brand">
-        <h1>USF COHAB</h1>
-        <p>Dr. João Pereira da Rosa</p>
+    <div class="container">
+        <div class="logo-area">
+            <h1>USF COHAB</h1>
+            <p class="subtitulo-dr">Dr. João Pereira da Rosa</p>
+        </div>
+        <div class="menu-grid">
+            <a href="chamador-unidades.html" class="card-link">
+                <b>🎫 PAINEL DE CONTROLE</b>
+                <span>Acesso para Equipe e Recepção</span>
+            </a>
+            <a href="tv-unidades.html" class="card-link">
+                <b>📺 MONITOR DA TV</b>
+                <span>Exibição de Senhas e Avisos</span>
+            </a>
+        </div>
     </div>
-
-    <div class="menu">
-        <a href="tv.html" class="btn-link btn-tv">📺 ABRIR MONITOR (TV)</a>
-        <a href="painel.html" class="btn-link btn-painel">💻 ABRIR PAINEL</a>
-    </div>
-
-    <div class="footer-info">
-        Desenvolvido por LUCAS FREITAS GOMES<br>
-        SISTEMA ATUALIZADO 2026
-    </div>
-</div>
-
 </body>
 </html>
