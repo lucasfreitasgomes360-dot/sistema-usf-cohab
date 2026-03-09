@@ -2,128 +2,68 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PAINEL USF COHAB</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Chamador - USF COHAB</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
     <style>
-        :root { --primary: #002b5c; --accent: #2ecc71; --pref: #e67e22; --coleta: #8e44ad; --bg: #f4f7fa; --red: #d9534f; }
-        body { font-family: 'Montserrat', sans-serif; background: var(--bg); margin: 0; padding: 15px; display: flex; justify-content: center; }
-        .app-container { background: white; width: 100%; max-width: 480px; border-radius: 30px; padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-        .brand { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        .brand h1 { font-weight: 900; color: var(--primary); margin: 0; font-size: 1.4rem; }
-        label { display: block; font-size: 0.7rem; font-weight: 800; color: #778ca3; margin: 15px 0 5px; text-transform: uppercase; }
-        select, input { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #edf2f7; font-size: 1rem; font-weight: 600; font-family: inherit; box-sizing: border-box; margin-bottom: 10px; }
-        .btn { width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; text-transform: uppercase; cursor: pointer; color: white; margin-top: 10px; transition: 0.2s; }
-        .btn-call { background: var(--primary); }
-        .section { display: none; animation: fadeIn 0.3s; }
-        .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .history-box { margin-top: 20px; background: #f8fafc; border-radius: 15px; padding: 10px; border: 1px dashed #cbd5e0; }
-        .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border-radius: 12px; margin-bottom: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.03); font-size: 0.8rem; font-weight: 700; color: var(--primary); }
-        .hist-time { color: var(--red); font-size: 0.7rem; margin-right: 5px; }
-        .btn-re { background: #eef2f7; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 0.65rem; color: var(--primary); }
+        :root { --primary: #003366; --secondary: #007bff; --light: #f8f9fa; }
+        body { font-family: 'Segoe UI', sans-serif; background: #eef2f7; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; border-top: 10px solid var(--primary); }
+        .header-unidade { text-align: center; margin-bottom: 25px; }
+        .header-unidade h2 { color: var(--primary); margin: 0; }
+        select, input, button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 10px; border: 1px solid #ddd; font-size: 1rem; }
+        button { background: var(--primary); color: white; font-weight: bold; cursor: pointer; border: none; }
+        button:hover { background: var(--secondary); }
     </style>
 </head>
 <body>
-<div class="app-container">
-    <div class="brand"><h1>USF COHAB</h1><p style="color:var(--red); font-weight:bold; font-size:0.7rem; margin:0;">DR. JOÃO PEREIRA DA ROSA</p></div>
-    
-    <label>QUEM ESTÁ USANDO?</label>
-    <select id="main-setor" onchange="trocarSetor()">
-        <option value="">Selecione seu local...</option>
-        <option value="REC1">RECEPÇÃO 01</option>
-        <option value="REC2">RECEPÇÃO 02</option>
-        <option value="MED1">CONSULTÓRIO 01</option>
-        <option value="MED2">CONSULTÓRIO 02</option>
-        <option value="MED3">CONSULTÓRIO 03</option>
-        <option value="ENF_TRI">SALA DE TRIAGEM</option>
-        <option value="ENF_VAC">SALA DE VACINA</option>
-        <option value="ODONTO">ODONTOLOGIA</option>
-    </select>
+    <div class="container">
+        <div class="header-unidade">
+            <h2>USF COHAB</h2>
+            <small>Painel Dr. João Pereira da Rosa</small>
+        </div>
 
-    <div id="area-chamada" class="section">
-        <div id="campos-dinamicos"></div>
-        <button class="btn btn-call" id="btn-principal" onclick="dispararChamada()">CHAMAR AGORA</button>
-        
-        <div class="history-box">
-            <label>MEU HISTÓRICO DE HOJE</label>
-            <div id="meu-historico"></div>
+        <label>Selecione seu Setor:</label>
+        <select id="setorUsuario">
+            <option value="RECEPÇÃO">RECEPÇÃO</option>
+            <option value="CONSULTÓRIO 01">CONSULTÓRIO 01</option>
+            <option value="CONSULTÓRIO 02">CONSULTÓRIO 02</option>
+            <option value="TRIAGEM">TRIAGEM</option>
+        </select>
+
+        <hr>
+        <input type="text" id="nomePaciente" placeholder="Nome do Paciente">
+        <button onclick="chamarPaciente()">CHAMAR PACIENTE</button>
+
+        <div id="historicoLocal" style="margin-top:20px; font-size:0.9rem; color:#666;">
+            <b>Seu histórico recente:</b>
+            <div id="listaHist"></div>
         </div>
     </div>
-</div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-    
-    const config = { databaseURL: "https://sistema-usf-cohab-default-rtdb.firebaseio.com" };
-    const db = getDatabase(initializeApp(config));
+    <script>
+        const firebaseConfig = {
+            databaseURL: "https://sistema-usf-cohab-default-rtdb.firebaseio.com"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
 
-    let setorAtual = "";
-    const histLocal = [];
+        function chamarPaciente() {
+            const nome = document.getElementById('nomePaciente').value.toUpperCase();
+            const local = document.getElementById('setorUsuario').value;
+            if(!nome) return alert("Digite o nome");
 
-    window.trocarSetor = () => {
-        setorAtual = document.getElementById('main-setor').value;
-        const area = document.getElementById('area-chamada');
-        const campos = document.getElementById('campos-dinamicos');
-        const btn = document.getElementById('btn-principal');
-        
-        if(!setorAtual) { area.classList.remove('active'); return; }
-        
-        area.classList.add('active');
-        document.getElementById('meu-historico').innerHTML = ""; // Limpa visual do histórico anterior
-        
-        // Configura a tela baseada no setor
-        if(setorAtual.startsWith('REC')) {
-            campos.innerHTML = `<label>TIPO DE SENHA</label><select id="sub-tipo"><option value="NORMAL">NORMAL</option><option value="PREF">PREFERENCIAL</option><option value="COLETA">DE COLETA</option></select>`;
-            btn.innerText = "CHAMAR PRÓXIMA SENHA";
-        } else {
-            campos.innerHTML = `<label>NOME DO PACIENTE</label><input type="text" id="nome-paciente" placeholder="Digite o nome...">`;
-            btn.innerText = "CHAMAR PACIENTE";
-        }
-    };
-
-    window.dispararChamada = () => {
-        const localNome = document.getElementById('main-setor').options[document.getElementById('main-setor').selectedIndex].text;
-        const hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-
-        if(setorAtual.startsWith('REC')) {
-            const sub = document.getElementById('sub-tipo').value;
-            runTransaction(ref(db, 'senhas_chamadas/' + sub), (c) => (c || 0) + 1).then(r => {
-                const num = r.snapshot.val();
-                enviarParaFila(num < 10 ? '0'+num : num, localNome, 'SENHA', sub, hora);
+            database.ref('fila').push({
+                nome: nome,
+                local: local,
+                timestamp: Date.now()
             });
-        } else {
-            const nome = document.getElementById('nome-paciente').value.toUpperCase();
-            if(!nome) return;
-            enviarParaFila(nome, localNome, 'PACIENTE', '', hora);
-            document.getElementById('nome-paciente').value = "";
+
+            const item = document.createElement('div');
+            item.innerText = `${new Date().toLocaleTimeString()} - ${nome}`;
+            document.getElementById('listaHist').prepend(item);
+            document.getElementById('nomePaciente').value = "";
         }
-    };
-
-    function enviarParaFila(nome, local, tipo, subtipo, hora) {
-        const dados = { nome, local, tipo, subtipo, hora, timestamp: Date.now() };
-        push(ref(db, 'fila'), dados);
-        atualizarHistUI(dados);
-    }
-
-    function atualizarHistUI(d) {
-        const lista = document.getElementById('meu-historico');
-        const div = document.createElement('div');
-        div.className = 'hist-item';
-        let texto = (d.tipo === 'SENHA') ? `${d.subtipo} ${d.nome}` : d.nome;
-        div.innerHTML = `<div><span class="hist-time">${d.hora}</span> ${texto}</div>
-                         <button class="btn-re" onclick="window.reChamar('${d.nome}','${d.local}','${d.tipo}','${d.subtipo}')">RECHAMAR</button>`;
-        lista.insertBefore(div, lista.firstChild);
-        if(lista.children.length > 6) lista.removeChild(lista.lastChild);
-    }
-
-    window.reChamar = (nome, local, tipo, subtipo) => {
-        const hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-        const dados = { nome, local, tipo, subtipo, hora, timestamp: Date.now() };
-        push(ref(db, 'fila'), dados);
-        atualizarHistUI(dados);
-    };
-</script>
+    </script>
 </body>
 </html>
