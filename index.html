@@ -5,16 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Chamadas - USF COHAB</title>
     <style>
-        :root { --primary: #002b5c; --secondary: #007bff; --accent: #ffcc00; --bg: #f4f7f9; }
+        :root { --primary: #002b5c; --secondary: #007bff; --accent: #ffcc00; --bg: #f4f7f9; --danger: #d32f2f; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; color: #333; }
         .container { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center; max-width: 500px; width: 90%; border-top: 10px solid var(--primary); }
-        .logo-area h1 { margin: 0; color: var(--primary); font-size: 1.8rem; font-weight: 900; }
-        .subtitulo-dr { color: #d32f2f; font-weight: bold; margin-top: 5px; text-transform: uppercase; font-size: 0.9rem; }
-        .menu-grid { margin-top: 30px; display: grid; gap: 15px; }
-        .card-link { display: flex; flex-direction: column; padding: 20px; background: #fff; border: 2px solid #eee; border-radius: 15px; text-decoration: none; transition: all 0.3s ease; }
-        .card-link:hover { border-color: var(--secondary); transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
-        .card-link b { color: var(--primary); font-size: 1.1rem; }
-        .card-link span { color: #777; font-size: 0.85rem; margin-top: 4px; }
+        .logo-area h1 { margin: 0; color: var(--primary); font-size: 1.8rem; letter-spacing: 1px; font-weight: 900; }
+        .subtitulo-dr { color: var(--danger); font-weight: bold; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; font-size: 0.95rem; }
+        .menu-grid { margin-top: 45px; display: grid; gap: 20px; }
+        .card-link { display: flex; flex-direction: column; padding: 25px; background: #fff; border: 2px solid #eee; border-radius: 18px; text-decoration: none; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .card-link:hover { border-color: var(--secondary); transform: translateY(-8px); box-shadow: 0 8px 20px rgba(0,123,255,0.15); }
+        .card-link b { font-size: 1.25rem; color: var(--primary); margin-bottom: 5px; }
+        .card-link span { font-size: 0.95rem; color: #777; }
+        .footer-creditos { margin-top: 45px; text-align: center; font-size: 0.8rem; color: #999; line-height: 1.6; letter-spacing: 0.5px; }
+        .footer-creditos b { color: #444; }
     </style>
 </head>
 <body>
@@ -32,6 +34,10 @@
                 <b>📺 MONITOR DA TV</b>
                 <span>Exibição de Senhas e Avisos</span>
             </a>
+        </div>
+        <div class="footer-creditos">
+            SISTEMA DE GERENCIAMENTO DE FILAS<br>
+            <b>Desenvolvido por Lucas Freitas Gomes © 2026</b>
         </div>
     </div>
 </body>
