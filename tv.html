@@ -33,7 +33,7 @@
 <body id="corpo-tv">
     <div class="assinatura-tv">
         Desenvolvido por <b>Lucas Freitas Gomes</b> &copy; 2026<br>
-        USF Aero Rancho IV
+        USF Cohab - Dr. Olimpio Cavalheiro
     </div>
 
     <div id="aviso-inicial" onclick="this.style.display='none'" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:999; display:flex; flex-direction:column; justify-content:center; align-items:center; cursor:pointer;">
@@ -155,7 +155,7 @@
 
         function iniciarCarrossel() {
             clearInterval(intervaloCarrossel);
-            if (listaAvisos.length === 0) { document.getElementById('texto-info').innerText = "USF Aero Rancho IV - Dr. Nelson T. Simabukuro"; return; }
+            if (listaAvisos.length === 0) { document.getElementById('texto-info').innerText = "USF Cohab - Dr. Olimpio Cavalheiro"; return; }
             rodarFrase(); intervaloCarrossel = setInterval(rodarFrase, 12000);
         }
 
