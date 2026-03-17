@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>TV - USF COHAB</title>
+    <title>TV - USF Cohab</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
     <style>
@@ -33,7 +33,7 @@
 <body id="corpo-tv">
     <div class="assinatura-tv">
         Desenvolvido por <b>Lucas Freitas Gomes</b> &copy; 2026<br>
-        USF COHAB
+        USF Aero Rancho IV
     </div>
 
     <div id="aviso-inicial" onclick="this.style.display='none'" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:999; display:flex; flex-direction:column; justify-content:center; align-items:center; cursor:pointer;">
@@ -43,8 +43,8 @@
 
     <div class="topo">
         <div class="unidade-nome">
-            <h1>USF COHAB</h1>
-            <p>Dr. João Pereira da Rosa</p>
+            <h1>USF Cohab</h1>
+            <p>Dr. João Pereira Rosa</p>
         </div>
         <div class="area-relogio">
             <div id="relogio" class="relogio">00:00:00</div>
@@ -70,10 +70,13 @@
 
     <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyB-LPsGPEGcjMRPcEReNDQdgFWE5iE7Bh0",
+            apiKey: "AIzaSyA5tayYNLD_P_ZnlWhst81Dkuz8gDv7vPU",
             authDomain: "sistema-usf-cohab.firebaseapp.com",
+            databaseURL: "https://sistema-usf-cohab-default-rtdb.firebaseio.com",
             projectId: "sistema-usf-cohab",
-            databaseURL: "https://sistema-usf-cohab-default-rtdb.firebaseio.com"
+            storageBucket: "sistema-usf-cohab.firebasestorage.app",
+            messagingSenderId: "184566338840",
+            appId: "1:184566338840:web:995a701e4c787be2927a6d"
         };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
@@ -111,37 +114,48 @@
         }
 
         function falarTexto(nome, local) {
-            return new Promise((resolve) => {
-                window.speechSynthesis.cancel();
-                let loc = local.toLowerCase();
-                let prep = "ao"; 
-                if (loc.includes("recepção") || loc.includes("triagem") || loc.includes("vacina") || loc.includes("coleta") || loc.includes("sala") || loc.includes("mesa") || loc.includes("gerência")) {
-                    prep = "à"; 
-                }
-                let nomeUpper = nome.toUpperCase();
-                let textoParaFalar = nome.replace(/PREF\./gi, "PREFERENCIAL");
-                let textoFinal = "";
-                if (nomeUpper.includes("SENHA")) {
-                    textoFinal = `Atenção. ${textoParaFalar}. Dirija-se ${prep} ${local}`;
-                } else if (nomeUpper.includes("COLABORADOR:")) {
-                    let nomeLimpo = textoParaFalar.replace(/COLABORADOR: /gi, "");
-                    textoFinal = `Atenção. Colaborador ${nomeLimpo}. Dirija-se ${prep} ${local}`;
-                } else {
-                    textoFinal = `Atenção. Paciente ${textoParaFalar}. Dirija-se ${prep} ${local}`;
-                }
-                const fala = new SpeechSynthesisUtterance(textoFinal);
-                fala.lang = 'pt-BR';
-                fala.rate = 0.9;
-                fala.onend = () => resolve();
-                fala.onerror = () => resolve();
-                window.speechSynthesis.speak(fala);
-                setTimeout(resolve, 8000);
-            });
+    return new Promise((resolve) => {
+        window.speechSynthesis.cancel();
+        
+        let loc = local.toLowerCase();
+        let prep = "ao"; 
+        if (loc.includes("recepção") || loc.includes("triagem") || loc.includes("vacina") || loc.includes("coleta") || loc.includes("sala") || loc.includes("mesa") || loc.includes("gerência")) {
+            prep = "à"; 
         }
+
+        let nomeUpper = nome.toUpperCase();
+        let textoParaFalar = nome;
+
+        // --- AJUSTE PARA FALAR POR EXTENSO ---
+        // Se o texto contiver "PREF.", trocamos por "PREFERENCIAL" apenas na voz
+        textoParaFalar = textoParaFalar.replace(/PREF\./gi, "PREFERENCIAL");
+        // -------------------------------------
+
+        let textoFinal = "";
+
+        if (nomeUpper.includes("SENHA")) {
+            textoFinal = `Atenção. ${textoParaFalar}. Dirija-se ${prep} ${local}`;
+        } else if (nomeUpper.includes("COLABORADOR:")) {
+            let nomeLimpo = textoParaFalar.replace(/COLABORADOR: /gi, "");
+            textoFinal = `Atenção. Colaborador ${nomeLimpo}. Dirija-se ${prep} ${local}`;
+        } else {
+            textoFinal = `Atenção. Paciente ${textoParaFalar}. Dirija-se ${prep} ${local}`;
+        }
+
+        const fala = new SpeechSynthesisUtterance(textoFinal);
+        fala.lang = 'pt-BR';
+        fala.rate = 0.9;
+        fala.onend = () => resolve();
+        fala.onerror = () => resolve();
+        
+        window.speechSynthesis.speak(fala);
+        setTimeout(resolve, 8000);
+    });
+}
 
         function iniciarCarrossel() {
             clearInterval(intervaloCarrossel);
-            if (listaAvisos.length === 0) { document.getElementById('texto-info').innerText = "USF COHAB - Dr. João Pereira da Rosa"; return; }
+            if (listaAvisos.length === 0) { document.getElementById('texto-info').innerText = "USF Aero Rancho IV - Dr. Nelson T. Simabukuro"; return; }
             rodarFrase(); intervaloCarrossel = setInterval(rodarFrase, 12000);
         }
 
