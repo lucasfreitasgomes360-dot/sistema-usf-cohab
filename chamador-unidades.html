@@ -16,6 +16,7 @@
         label { font-weight: bold; display: block; margin-bottom: 8px; font-size: 0.85rem; color: var(--primary); text-transform: uppercase; }
         select, input { width: 100%; padding: 14px; border-radius: 10px; border: 2px solid #ddd; box-sizing: border-box; font-size: 1rem; margin-bottom: 10px; }
         .btn { border: none; border-radius: 10px; padding: 15px; font-weight: bold; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; color: white; text-transform: uppercase; width: 100%; margin-bottom: 10px; transition: filter 0.2s; }
+        .btn:hover { filter: brightness(1.1); }
         .btn-blue { background: var(--secondary); }
         .btn-orange { background: var(--warning); }
         .btn-green { background: var(--success); }
@@ -41,7 +42,7 @@
             <h2>USF Cohab</h2>
             <p>Dr. Olimpio Cavalheiro</p>
         </div>
-        
+
         <div class="card-setor">
             <label>Selecione seu Setor</label>
             <select id="categoria" onchange="trocouCategoria()">
@@ -113,18 +114,27 @@
                 <label>Últimos de: <span id="nomeSalaHistorico" style="color:var(--secondary)"></span></label>
                 <div id="listaHistorico"></div>
             </div>
-            
+
             <p style="text-align:center; color:#ccc; font-size:0.7rem; cursor:pointer; margin-top:30px;" onclick="resetContadores()">Reiniciar Sistema</p>
         </div>
     </div>
 
     <div class="footer-creditos">
         Desenvolvido por <b>Lucas Freitas Gomes</b> &copy; 2026<br>
+        USF Aero Rancho IV
         USF Cohab
     </div>
 
     <script>
         const firebaseConfig = {
+  apiKey: "AIzaSyA5tayYNLD_P_ZnlWhst81Dkuz8gDv7vPU",
+  authDomain: "sistema-usf-cohab.firebaseapp.com",
+  databaseURL: "https://sistema-usf-cohab-default-rtdb.firebaseio.com",
+  projectId: "sistema-usf-cohab",
+  storageBucket: "sistema-usf-cohab.firebasestorage.app",
+  messagingSenderId: "184566338840",
+  appId: "1:184566338840:web:995a701e4c787be2927a6d"
+};
             apiKey: "AIzaSyA5tayYNLD_P_ZnlWhst81Dkuz8gDv7vPU",
             authDomain: "sistema-usf-cohab.firebaseapp.com",
             databaseURL: "https://sistema-usf-cohab-default-rtdb.firebaseio.com",
@@ -196,38 +206,16 @@
             });
         }
 
-        // Função auxiliar para abreviar o nome seguindo a LGPD
-function formatarNomeLGPD(nome Completo) {
-    let partes = nomeCompleto.trim().split(/\s+/);
-    if (partes.length <= 1) return nomeCompleto.toUpperCase(); // Se for só um nome, mantém
-    
-    // Mantém o primeiro nome e apenas a primeira letra dos sobrenomes seguintes
-    let nomeFormatado = partes[0];
-    for (let i = 1; i < partes.length; i++) {
-        if (partes[i].length > 2) { // ignora "de", "da", "dos"
-            nomeFormatado += " " + partes[i].charAt(0).toUpperCase() + ".";
+        function enviarChamadaNome() {
+            const input = document.getElementById('nomePaciente');
+            const cat = document.getElementById('categoria').value;
+            let texto = input.value.trim();
+            if(texto !== "") { 
+                if(cat === 'gerencia') { texto = "COLABORADOR: " + texto; }
+                enviarParaFirebase(texto); input.value = ""; mostrarToast("Enviado!"); 
+            }
         }
-    }
-    return nomeFormatado.toUpperCase();
-}
 
-function enviarChamadaNome() {
-    const input = document.getElementById('nomePaciente');
-    const cat = document.getElementById('categoria').value;
-    let texto = input.value.trim();
-    
-    if(texto !== "") { 
-        // Se for gerência (colaborador), opcional manter ou abreviar. Aplicando LGPD para pacientes:
-        if(cat === 'gerencia') { 
-            texto = "COLABORADOR: " + formatarNomeLGPD(texto); 
-        } else {
-            texto = formatarNomeLGPD(texto); 
-        }
-        enviarParaFirebase(texto); 
-        input.value = ""; 
-        mostrarToast("Enviado de forma segura!"); 
-    }
-}
         function enviarParaFirebase(texto) {
             const sala = document.getElementById('minhaSala').value;
             database.ref('fila_chamadas').push({ msg: texto, local: sala, hora: Date.now() });
@@ -287,6 +275,7 @@ function enviarChamadaNome() {
         }
         function prepararEdicao(key, msg, cor) { document.getElementById('inputAvisoUnidade').value = msg; document.getElementById('corAviso').value = cor; document.getElementById('editAvisoKey').value = key; document.getElementById('btnSalvarAviso').innerText = "💾 SALVAR ALTERAÇÃO"; }
         function excluirAviso(key) { if(confirm("Excluir?")) database.ref('avisos_unidade/'+key).remove(); }
+        function resetContadores() { if(confirm("Zerar?")) { const pass = prompt("Senha:"); if(btoa(pass) === "YWVyb3JhbmNob2l2") { database.ref('contador').set({ NORMAL: 0, PREFERENCIAL: 0, COLETA: 0, ODONTO: 0 }); database.ref('acolhimento').set({ normal: 0, pref: 0, coleta: 0, odonto: 0 }); mostrarToast("Resetado!"); } } }
         function resetContadores() { if(confirm("Zerar?")) { const pass = prompt("Senha:"); if(btoa(pass) === "Y29oYWIyMDI2") { database.ref('contador').set({ NORMAL: 0, PREFERENCIAL: 0, COLETA: 0, ODONTO: 0 }); database.ref('acolhimento').set({ normal: 0, pref: 0, coleta: 0, odonto: 0 }); mostrarToast("Resetado!"); } } }
     </script>
 </body>
