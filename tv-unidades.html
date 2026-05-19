@@ -16,7 +16,7 @@
         .data-extenso { font-size: 1.1rem; color: #ccc; text-transform: capitalize; margin-top: 5px; }
         .conteudo-principal { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; position: relative; }
         #area-chamada { display: none; }
-        .paciente { font-size: 8rem; font-weight: bold; color: #ffcc00; text-transform: uppercase; padding: 0 20px; text-shadow: 4px 4px 10px rgba(0,0,0,0.5); }
+        .paciente { font-size: 6.5rem; font-weight: bold; color: #ffcc00; text-transform: uppercase; padding: 0 20px; text-shadow: 4px 4px 10px rgba(0,0,0,0.5); line-height: 1.1; }
         .sala { font-size: 5rem; background: white; color: #002b5c; padding: 10px 60px; border-radius: 20px; display: inline-block; margin-top: 25px; font-weight: bold; border: 4px solid #ffcc00; }
         #painel-informativo { display: block; padding: 20px; }
         .card-info { background: white; color: #333; border-radius: 25px; padding: 45px; max-width: 85%; margin: 0 auto; border-left: 25px solid #007bff; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -94,6 +94,35 @@
             if (!processandoChamada) iniciarCarrossel();
         });
 
+        // Função para formatar o nome atendendo à LGPD (Abrevia do meio, primeiro e último por extenso)
+        function aplicarLGPDAbreviacao(texto) {
+            let textoUpper = texto.toUpperCase();
+            // Se for senha ou colaborador, não altera o formato do nome
+            if (textoUpper.includes("SENHA") || textoUpper.includes("COLABORADOR:")) {
+                return texto.replace("COLABORADOR: ", "");
+            }
+
+            // Remove espaços extras e divide o nome pelas palavras
+            let partes = texto.trim().split(/\s+/);
+            if (partes.length <= 2) {
+                return texto; // Se tiver só nome e um sobrenome, mantém normal
+            }
+
+            let primeiroNome = partes[0];
+            let ultimoSobrenome = partes[partes.length - 1];
+            
+            // Mapeia os nomes do meio para virar apenas a inicial maiúscula + ponto
+            let nomesDoMeioAbreviados = partes.slice(1, partes.length - 1).map(nome => {
+                // Desconsidera conectores pequenos como "de", "da", "do" se preferir tirar, ou apenas abrevia
+                if (["DE", "DA", "DO", "DOS", "DAS"].includes(nome.toUpperCase())) {
+                    return ""; 
+                }
+                return nome.charAt(0).toUpperCase() + ".";
+            }).filter(item => item !== ""); // Remove campos vazios se houver conectores limpos
+
+            return [primeiroNome, ...nomesDoMeioAbreviados, ultimoSobrenome].join(" ");
+        }
+
         async function iniciarFila() {
             if (filaDeEspera.length === 0) { 
                 processandoChamada = false; document.getElementById('area-chamada').style.display = 'none'; 
@@ -101,7 +130,10 @@
             }
             processandoChamada = true; clearInterval(intervaloCarrossel);
             const atual = filaDeEspera.shift();
-            let msgExibida = atual.msg.replace("COLABORADOR: ", "");
+            
+            // Aplica a formatação LGPD na mensagem visual da TV
+            let msgExibida = aplicarLGPDAbreviacao(atual.msg);
+            
             document.getElementById('area-chamada').style.display = 'block';
             document.getElementById('painel-informativo').style.display = 'none';
             document.getElementById('txtPaciente').innerText = msgExibida;
@@ -114,44 +146,45 @@
         }
 
         function falarTexto(nome, local) {
-    return new Promise((resolve) => {
-        window.speechSynthesis.cancel();
-        
-        let loc = local.toLowerCase();
-        let prep = "ao"; 
-        if (loc.includes("recepção") || loc.includes("triagem") || loc.includes("vacina") || loc.includes("coleta") || loc.includes("sala") || loc.includes("mesa") || loc.includes("gerência")) {
-            prep = "à"; 
+            return new Promise((resolve) => {
+                window.speechSynthesis.cancel();
+                
+                let loc = local.toLowerCase();
+                let prep = "ao"; 
+                if (loc.includes("recepção") || loc.includes("triagem") || loc.includes("vacina") || loc.includes("coleta") || loc.includes("sala") || loc.includes("mesa") || loc.includes("gerência")) {
+                    prep = "à"; 
+                }
+
+                let nomeUpper = nome.toUpperCase();
+                let textoParaFalar = nome;
+
+                // --- AJUSTE PARA FALAR POR EXTENSO ---
+                textoParaFalar = textoParaFalar.replace(/PREF\./gi, "PREFERENCIAL");
+                // -------------------------------------
+
+                let textoFinal = "";
+
+                if (nomeUpper.includes("SENHA")) {
+                    textoFinal = `Atenção. ${textoParaFalar}. Dirija-se ${prep} ${local}`;
+                } else if (nomeUpper.includes("COLABORADOR:")) {
+                    let nomeLimpo = textoParaFalar.replace(/COLABORADOR: /gi, "");
+                    textoFinal = `Atenção. Colaborador ${nomeLimpo}. Dirija-se ${prep} ${local}`;
+                } else {
+                    // Para a voz também respeitar a LGPD e ler de forma abreviada (ex: Maria S. S. Andrade)
+                    let nomeLGPDFalado = aplicarLGPDAbreviacao(textoParaFalar);
+                    textoFinal = `Atenção. Paciente ${nomeLGPDFalado}. Dirija-se ${prep} ${local}`;
+                }
+
+                const fala = new SpeechSynthesisUtterance(textoFinal);
+                fala.lang = 'pt-BR';
+                fala.rate = 0.9;
+                fala.onend = () => resolve();
+                fala.onerror = () => resolve();
+                
+                window.speechSynthesis.speak(fala);
+                setTimeout(resolve, 8000);
+            });
         }
-
-        let nomeUpper = nome.toUpperCase();
-        let textoParaFalar = nome;
-
-        // --- AJUSTE PARA FALAR POR EXTENSO ---
-        // Se o texto contiver "PREF.", trocamos por "PREFERENCIAL" apenas na voz
-        textoParaFalar = textoParaFalar.replace(/PREF\./gi, "PREFERENCIAL");
-        // -------------------------------------
-
-        let textoFinal = "";
-
-        if (nomeUpper.includes("SENHA")) {
-            textoFinal = `Atenção. ${textoParaFalar}. Dirija-se ${prep} ${local}`;
-        } else if (nomeUpper.includes("COLABORADOR:")) {
-            let nomeLimpo = textoParaFalar.replace(/COLABORADOR: /gi, "");
-            textoFinal = `Atenção. Colaborador ${nomeLimpo}. Dirija-se ${prep} ${local}`;
-        } else {
-            textoFinal = `Atenção. Paciente ${textoParaFalar}. Dirija-se ${prep} ${local}`;
-        }
-
-        const fala = new SpeechSynthesisUtterance(textoFinal);
-        fala.lang = 'pt-BR';
-        fala.rate = 0.9;
-        fala.onend = () => resolve();
-        fala.onerror = () => resolve();
-        
-        window.speechSynthesis.speak(fala);
-        setTimeout(resolve, 8000);
-    });
-}
 
         function iniciarCarrossel() {
             clearInterval(intervaloCarrossel);
