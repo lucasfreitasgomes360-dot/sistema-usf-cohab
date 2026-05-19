@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Chamador - USF Cohab</title>
+    <title>Chamador - USF Cohab (Privacidade Protegida)</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
     <style>
@@ -16,6 +16,7 @@
         label { font-weight: bold; display: block; margin-bottom: 8px; font-size: 0.85rem; color: var(--primary); text-transform: uppercase; }
         select, input { width: 100%; padding: 14px; border-radius: 10px; border: 2px solid #ddd; box-sizing: border-box; font-size: 1rem; margin-bottom: 10px; }
         .btn { border: none; border-radius: 10px; padding: 15px; font-weight: bold; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; color: white; text-transform: uppercase; width: 100%; margin-bottom: 10px; transition: filter 0.2s; }
+        .btn:hover { filter: brightness(1.1); }
         .btn-blue { background: var(--secondary); }
         .btn-orange { background: var(--warning); }
         .btn-green { background: var(--success); }
@@ -32,15 +33,18 @@
         #toast { visibility: hidden; min-width: 250px; background: #333; color: #fff; text-align: center; border-radius: 30px; padding: 16px; position: fixed; z-index: 10; top: 30px; left: 50%; transform: translateX(-50%); opacity: 0; transition: 0.5s; }
         #toast.show { visibility: visible; opacity: 1; top: 50px; }
         .footer-creditos { margin-top: 30px; text-align: center; font-size: 0.75rem; color: #777; line-height: 1.4; border-top: 1px solid #ddd; padding-top: 15px; width: 100%; max-width: 450px; }
+        .lgpd-badge { background: #e3f2fd; color: #0d47a1; font-size: 0.75rem; font-weight: bold; padding: 5px 10px; border-radius: 5px; margin-bottom: 15px; text-align: center; border: 1px solid #bbdefb; }
     </style>
 </head>
 <body>
     <div id="toast">Operação realizada!</div>
     <div class="container">
         <div class="header-unidade">
-            <h2>USF Cohab</h2>
+            <h2>USF COHAB</h2>
             <p>Dr. Olimpio Cavalheiro</p>
         </div>
+        
+        <div class="lgpd-badge">🛡️ SISTEMA ADAPTADO À LGPD (Minimização Automática de Nomes)</div>
         
         <div class="card-setor">
             <label>Selecione seu Setor</label>
@@ -95,7 +99,7 @@
 
             <div id="interfaceNome" style="display:none; margin-top: 15px;">
                 <label id="labelNome">Nome do Paciente</label>
-                <input type="text" id="nomePaciente" placeholder="Digite o nome...">
+                <input type="text" id="nomePaciente" placeholder="Digite o nome completo...">
                 <button class="btn btn-green" onclick="enviarChamadaNome()">📣 CHAMAR NA TV</button>
             </div>
 
@@ -125,19 +129,13 @@
 
     <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyA5tayYNLD_P_ZnlWhst81Dkuz8gDv7vPU",
-            authDomain: "sistema-usf-cohab.firebaseapp.com",
-            databaseURL: "https://sistema-usf-cohab-default-rtdb.firebaseio.com",
-            projectId: "sistema-usf-cohab",
-            storageBucket: "sistema-usf-cohab.firebasestorage.app",
-            messagingSenderId: "184566338840",
-            appId: "1:184566338840:web:995a701e4c787be2927a6d"
+            apiKey: "AIzaSyB-LPsGPEGcjMRPcEReNDQdgFWE5iE7Bh0",
+            authDomain: "usf-aero-rancho-b6d85.firebaseapp.com",
+            projectId: "usf-aero-rancho-b6d85",
+            databaseURL: "https://usf-aero-rancho-b6d85-default-rtdb.firebaseio.com"
         };
-        // --- LINHAS QUE FALTAVAM ---
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-        // ---------------------------
-        
         let historicosPorSala = {};
 
         const config = {
@@ -170,7 +168,7 @@
             const lbl = document.getElementById('labelNome');
             const inp = document.getElementById('nomePaciente');
             if(cat === 'gerencia') { lbl.innerText = "Nome do Colaborador"; inp.placeholder = "Digite o nome do colaborador..."; }
-            else { lbl.innerText = "Nome do Paciente"; inp.placeholder = "Digite o nome..."; }
+            else { lbl.innerText = "Nome do Paciente"; inp.placeholder = "Digite o nome completo..."; }
             configurarTela();
         }
 
@@ -196,13 +194,33 @@
             });
         }
 
+        // Função para formatação LGPD (Minimização do Nome) antes do envio ao Firebase na USF Cohab
+        function formatarNomeLGPD(nomeCompleto) {
+            let partes = nomeCompleto.trim().split(/\s+/);
+            if (partes.length <= 1) return nomeCompleto.toUpperCase();
+            
+            let nomeFormatado = partes[0];
+            for (let i = 1; i < partes.length; i++) {
+                if (partes[i].length > 2) {
+                    nomeFormatado += " " + partes[i].charAt(0).toUpperCase() + ".";
+                }
+            }
+            return nomeFormatado.toUpperCase();
+        }
+
         function enviarChamadaNome() {
             const input = document.getElementById('nomePaciente');
             const cat = document.getElementById('categoria').value;
             let texto = input.value.trim();
             if(texto !== "") { 
-                if(cat === 'gerencia') { texto = "COLABORADOR: " + texto; }
-                enviarParaFirebase(texto); input.value = ""; mostrarToast("Enviado!"); 
+                if(cat === 'gerencia') { 
+                    texto = "COLABORADOR: " + formatarNomeLGPD(texto); 
+                } else {
+                    texto = formatarNomeLGPD(texto); 
+                }
+                enviarParaFirebase(texto); 
+                input.value = ""; 
+                mostrarToast("Enviado com segurança!"); 
             }
         }
 
