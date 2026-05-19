@@ -108,54 +108,10 @@
             document.getElementById('txtSala').innerText = atual.local;
             document.body.classList.remove('piscar-alerta'); void document.body.offsetWidth; document.body.classList.add('piscar-alerta');
             somCampainha.play().catch(e => {});
-            // Adicione esta função de segurança também na TV (Dupla camada de proteção)
-function conterDadosLGPD(texto) {
-    if (texto.includes("SENHA")) return texto; // Se for senha, não mexe
-    
-    let prefixo = "";
-    let nomeLimpo = texto;
-    if (texto.startsWith("COLABORADOR: ")) {
-        prefixo = "COLABORADOR: ";
-        nomeLimpo = texto.replace("COLABORADOR: ", "");
-    }
-    
-    let partes = nomeLimpo.trim().split(/\s+/);
-    if (partes.length <= 1) return texto.toUpperCase();
-    
-    let nomeFormatado = partes[0];
-    for (let i = 1; i < partes.length; i++) {
-        if (partes[i].length > 2) {
-            // Se o sobrenome já veio abreviado com ponto, mantém, senão abrevia
-            nomeFormatado += " " + (partes[i].includes(".") ? partes[i] : partes[i].charAt(0).toUpperCase() + ".");
+            atualizarHistTV(msgExibida, atual.local);
+            await falarTexto(atual.msg, atual.local);
+            setTimeout(iniciarFila, 4000);
         }
-    }
-    return prefixo + nomeFormatado.toUpperCase();
-}
-
-// Atualize a função iniciarFila() na parte que mexe com o texto:
-async function iniciarFila() {
-    if (filaDeEspera.length === 0) { 
-        processandoChamada = false; document.getElementById('area-chamada').style.display = 'none'; 
-        document.getElementById('painel-informativo').style.display = 'block'; iniciarCarrossel(); return; 
-    }
-    processandoChamada = true; clearInterval(intervaloCarrossel);
-    const atual = filaDeEspera.shift();
-    
-    // Tratamento LGPD na TV
-    let msgSegura = conterDadosLGPD(atual.msg);
-    let msgExibida = msgSegura.replace("COLABORADOR: ", "");
-    
-    document.getElementById('area-chamada').style.display = 'block';
-    document.getElementById('painel-informativo').style.display = 'none';
-    document.getElementById('txtPaciente').innerText = msgExibida;
-    document.getElementById('txtSala').innerText = atual.local;
-    document.body.classList.remove('piscar-alerta'); void document.body.offsetWidth; document.body.classList.add('piscar-alerta');
-    somCampainha.play().catch(e => {});
-    
-    atualizarHistTV(msgExibida, atual.local);
-    await falarTexto(msgSegura, atual.local); // A voz falará o nome abreviado (Ex: "Paciente Maria A. S.")
-    setTimeout(iniciarFila, 4000);
-}
 
         function falarTexto(nome, local) {
     return new Promise((resolve) => {
